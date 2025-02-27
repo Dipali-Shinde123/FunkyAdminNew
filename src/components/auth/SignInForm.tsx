@@ -1,44 +1,55 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; 
+import { Link, useNavigate } from "react-router-dom";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
-
+import { endpoints, poster as loginPoster } from "../../utils/axios-auth";
+import { setLocalStorage } from "../../auth/context/utils";
 
 
 export default function SignInForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [error, setError] = useState("");
-  
-  const navigate = useNavigate();  
+  const [loading, setLoading] = useState(false);
 
-  
+  // const navigate = useNavigate();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
-      const response = await fetch("https://namahsoftech.com/funky_app/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await loginPoster(endpoints.auth.login, formData)
+      console.log(response);
+      const { token, user } = response;
 
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem("auth_token", data.auth_token); 
-        alert("Login Successful!");
-        navigate("/dashboard");  
+      if (token && user) {
+        setLocalStorage(token);
+        localStorage.setItem('user', JSON.stringify(user));
+        navigate('/');
       } else {
-        setError(data.message || "Invalid credentials");
+        setError('Authentication failed. Please try again.');
       }
     } catch (err) {
       setError("Server error, please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -64,13 +75,25 @@ export default function SignInForm() {
             <div className="space-y-6">
               <div>
                 <Label>Email <span className="text-error-500">*</span></Label>
-                <Input type="email" placeholder="admin@example.com" value={email} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)} />
+                <Input
+                  type="email"
+                  name="email"
+                  placeholder="admin@example.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
               </div>
 
               <div>
                 <Label>Password <span className="text-error-500">*</span></Label>
                 <div className="relative">
-                  <Input type={showPassword ? "text" : "password"} placeholder="Enter your password" value={password} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)} />
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={handleChange} // Update formData.password
+                  />
                   <span onClick={() => setShowPassword(!showPassword)} className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2">
                     {showPassword ? <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" /> : <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />}
                   </span>
@@ -79,7 +102,7 @@ export default function SignInForm() {
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                <Checkbox checked={isChecked} onChange={(checked: boolean) => setIsChecked(checked)} />
+                  <Checkbox checked={isChecked} onChange={(checked: boolean) => setIsChecked(checked)} />
 
                   <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">Keep me logged in</span>
                 </div>
@@ -88,11 +111,11 @@ export default function SignInForm() {
                 </Link>
               </div>
 
-              {error && <p className="text-red-500 text-sm">{error}</p>}  
+              {error && <p className="text-red-500 text-sm">{error}</p>}
 
               <div>
-              <button type="submit" className="w-full bg-blue-500 text-white px-4 py-2 rounded">
-                Sign in
+                <button type="submit" className="w-full bg-blue-500 text-white px-4 py-2 rounded">
+                  {loading ? 'Signing In...' : 'Sign in'}
                 </button>
 
               </div>

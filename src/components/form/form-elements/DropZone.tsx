@@ -1,11 +1,27 @@
+import React, { useState } from "react";
 import ComponentCard from "../../common/ComponentCard";
 import { useDropzone } from "react-dropzone";
-// import Dropzone from "react-dropzone";
 
-const DropzoneComponent: React.FC = () => {
+interface DropzoneComponentProps {
+  onImageUpload: (image: File | null) => void;
+}
+
+const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onImageUpload }) => {
+  const [preview, setPreview] = useState<string | null>(null); // State to store image preview
+
   const onDrop = (acceptedFiles: File[]) => {
     console.log("Files dropped:", acceptedFiles);
-    // Handle file uploads here
+
+    // If there are files, create a preview for the first file (assuming it's an image)
+    const file = acceptedFiles[0];
+    if (file && file.type.startsWith("image")) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string); // Set the image preview as base64 data URL
+        onImageUpload(file); // Update the parent formData state with the image file
+      };
+      reader.readAsDataURL(file); // Read the image as a data URL
+    }
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -17,18 +33,24 @@ const DropzoneComponent: React.FC = () => {
       "image/svg+xml": [],
     },
   });
+
   return (
-    <ComponentCard title="Dropzone">
-      <div className="transition border border-gray-300 border-dashed cursor-pointer dark:hover:border-brand-500 dark:border-gray-700 rounded-xl hover:border-brand-500">
+    <ComponentCard title="Add Profile Picture">
+      <div
+        className="transition border border-gray-300 border-dashed cursor-pointer dark:hover:border-brand-500 dark:border-gray-700 rounded-xl hover:border-brand-500"
+        style={{
+          backgroundImage: preview ? `url(${preview})` : undefined,
+          backgroundSize: preview ? "cover" : "auto",
+          backgroundPosition: preview ? "center" : "initial",
+        }}
+      >
         <form
           {...getRootProps()}
-          className={`dropzone rounded-xl   border-dashed border-gray-300 p-7 lg:p-10
-        ${
-          isDragActive
-            ? "border-brand-500 bg-gray-100 dark:bg-gray-800"
-            : "border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-gray-900"
-        }
-      `}
+          className={`dropzone rounded-xl border-dashed border-gray-300 p-7 lg:p-10
+            ${isDragActive
+              ? "border-brand-500 bg-gray-100 dark:bg-gray-800"
+              : "border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-gray-900"
+            }`}
           id="demo-upload"
         >
           {/* Hidden Input */}
@@ -37,7 +59,7 @@ const DropzoneComponent: React.FC = () => {
           <div className="dz-message flex flex-col items-center !m-0">
             {/* Icon Container */}
             <div className="mb-[22px] flex justify-center">
-              <div className="flex h-[68px] w-[68px]  items-center justify-center rounded-full bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-400">
+              <div className="flex h-[68px] w-[68px] items-center justify-center rounded-full bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-400">
                 <svg
                   className="fill-current"
                   width="29"
@@ -59,7 +81,7 @@ const DropzoneComponent: React.FC = () => {
               {isDragActive ? "Drop Files Here" : "Drag & Drop Files Here"}
             </h4>
 
-            <span className=" text-center mb-5 block w-full max-w-[290px] text-sm text-gray-700 dark:text-gray-400">
+            <span className="text-center mb-5 block w-full max-w-[290px] text-sm text-gray-700 dark:text-gray-400">
               Drag and drop your PNG, JPG, WebP, SVG images here or browse
             </span>
 
@@ -69,6 +91,14 @@ const DropzoneComponent: React.FC = () => {
           </div>
         </form>
       </div>
+
+      {/* Display preview after file is dropped */}
+      {preview && (
+        <div className="mt-4 text-center">
+          <h5 className="font-medium text-gray-800 dark:text-white">Preview:</h5>
+          <img src={preview} alt="Preview" className="mt-2 max-w-[200px] mx-auto rounded-lg" />
+        </div>
+      )}
     </ComponentCard>
   );
 };

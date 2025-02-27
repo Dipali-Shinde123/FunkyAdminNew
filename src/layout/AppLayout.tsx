@@ -3,8 +3,13 @@ import { Outlet } from "react-router";
 import AppHeader from "./AppHeader";
 import Backdrop from "./Backdrop";
 import AppSidebar from "./AppSidebar";
+import { ReactNode } from "react";
 
-const LayoutContent: React.FC = () => {
+interface LayoutContentProps {
+  children?: ReactNode; // Accepting children for LayoutContent
+}
+
+const LayoutContent: React.FC<LayoutContentProps> = ({ children }) => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
 
   return (
@@ -14,23 +19,26 @@ const LayoutContent: React.FC = () => {
         <Backdrop />
       </div>
       <div
-        className={`flex-1 transition-all duration-300 ease-in-out ${
-          isExpanded || isHovered ? "lg:ml-[290px]" : "lg:ml-[90px]"
-        } ${isMobileOpen ? "ml-0" : ""}`}
+        className={`flex-1 transition-all duration-300 ease-in-out ${isExpanded || isHovered ? "lg:ml-[290px]" : "lg:ml-[90px]"
+          } ${isMobileOpen ? "ml-0" : ""}`}
       >
         <AppHeader />
         <div className="p-4 mx-auto max-w-screen-2xl md:p-6">
-          <Outlet />
+          {children || <Outlet />} {/* If children exist, render them, otherwise render Outlet */}
         </div>
       </div>
     </div>
   );
 };
 
-const AppLayout: React.FC = () => {
+interface AppLayoutProps {
+  children?: ReactNode; // Accept children for AppLayout
+}
+
+const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   return (
     <SidebarProvider>
-      <LayoutContent />
+      <LayoutContent>{children}</LayoutContent> {/* Pass children to LayoutContent */}
     </SidebarProvider>
   );
 };

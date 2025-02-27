@@ -1,4 +1,4 @@
-import  React from "react";
+import React from "react";
 import type { FC } from "react";
 
 interface InputProps {
@@ -16,6 +16,7 @@ interface InputProps {
   success?: boolean;
   error?: boolean;
   hint?: string;
+  required?: boolean;
 }
 
 const Input: FC<InputProps> = ({
@@ -33,6 +34,7 @@ const Input: FC<InputProps> = ({
   success = false,
   error = false,
   hint,
+  required
 }) => {
   let inputClasses = ` h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-none focus:ring  dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 ${className}`;
 
@@ -60,17 +62,12 @@ const Input: FC<InputProps> = ({
         step={step}
         disabled={disabled}
         className={inputClasses}
+        required={required}
       />
 
       {hint && (
         <p
-          className={`mt-1.5 text-xs ${
-            error
-              ? "text-error-500"
-              : success
-              ? "text-success-500"
-              : "text-gray-500"
-          }`}
+          className={`mt-1.5 text-xs ${"text-error-500"}`}
         >
           {hint}
         </p>
