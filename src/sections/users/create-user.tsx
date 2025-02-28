@@ -249,7 +249,6 @@ const CreateUser = () => {
                 placeholder="Enter your password"
                 value={formData.password}
                 onChange={handleInputChange}
-                required
               />
               <button
                 onClick={() => setShowPassword(!showPassword)}

@@ -47,7 +47,7 @@ const Users = () => {
 
   const handleBlockUnblock = async (id: string | number) => {
     try {
-      setLoading(true); 
+      setLoading(true);
       const url = `${endpoints.users.blockUnblock}/${id}`;
       const headers = {
         Authorization: `Bearer ${localStorage.getItem('token')}`,

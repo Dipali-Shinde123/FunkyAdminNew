@@ -73,5 +73,13 @@ export const endpoints = {
         update: '/admin/user/update',
         delete: '/admin/user/delete',
         blockUnblock: '/admin/blockUnblockStatus'
+    },
+    content: {
+        list: '/admin/user/list',
+        create: '/admin/user-create',
+        details: '/admin/user/show',
+        update: '/admin/user/update',
+        delete: '/admin/user/delete',
+        blockUnblock: '/admin/blockUnblockStatus'
     }
 };
