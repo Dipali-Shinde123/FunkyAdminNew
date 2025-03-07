@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import BasicTableOne from '../../components/tables/BasicTables/BasicTableOne';
 import { useGetUsers } from '../../api/dashboard/user';
-import { Trash2, EyeIcon } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { deleter, endpoints, poster } from '../../utils/axios-dashboard';
 import { useSnackbar } from 'notistack';
 
@@ -17,9 +17,13 @@ interface User {
 
 const Users = () => {
   const { users, usersLoading, mutate: mutateUsers } = useGetUsers();
-  const [tableData, setTableData] = useState([]);
+  const [tableData, setTableData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+
+  // State for search query and filter
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedFilter, setSelectedFilter] = useState<string>('');
 
   const handleDeleteRow = async (id: string | number) => {
     try {
@@ -73,8 +77,7 @@ const Users = () => {
 
   useEffect(() => {
     if (users?.data) {
-      const filteredUsers = users?.data;
-      const updatedTableData = filteredUsers.map((user: User) => [
+      const updatedTableData = users?.data.map((user: User) => [
         user.fullName,
         user.email,
         user.image_url,
@@ -82,9 +85,6 @@ const Users = () => {
         user.type,
         (
           <div className="flex gap-2">
-            <button type="button" className="text-primary hover:text-blue-900">
-              <EyeIcon />
-            </button>
             <button type="button" onClick={() => handleDeleteRow(user.id)} className="text-red-500 hover:text-red-700">
               <Trash2 />
             </button>
@@ -118,7 +118,16 @@ const Users = () => {
 
   return (
     <div>
-      <BasicTableOne tableData={tableData} tableHeadings={tableHeadings} />
+      <BasicTableOne 
+        tableData={tableData} 
+        tableHeadings={tableHeadings} 
+        searchQuery={searchQuery} 
+        setSearchQuery={setSearchQuery} 
+        selectedFilter={selectedFilter} 
+        setSelectedFilter={setSelectedFilter}
+        searchColumns={['fullName', 'email']}  // Search across name and email columns
+        showFilter={true}
+      />
     </div>
   );
 };

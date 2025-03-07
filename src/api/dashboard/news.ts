@@ -10,14 +10,14 @@ interface ErrorResponse {
     message: string;
 }
 
-export const useGetUsers = () => {
+export const useGetNews = () => {
     const [accessToken, setAccessToken] = useState<string | null>(null);
     useEffect(() => {
         const token = localStorage.getItem(STORAGE_KEY);
         setAccessToken(token);
     }, []);
 
-    const URL = endpoints.users.list;
+    const URL = endpoints.news.list;
     const { data, isLoading, error, isValidating, mutate } = useSWR(
         accessToken ? [URL, { headers: { Authorization: `Bearer ${accessToken}` } }] : null,
         fetcher
@@ -25,11 +25,11 @@ export const useGetUsers = () => {
 
     const memoizedValue = useMemo(
         () => ({
-            users: data || [],
-            usersLoading: isLoading,
-            usersError: error,
-            usersValidating: isValidating,
-            usersEmpty: !isLoading && !data?.length,
+            news: data || [],
+            newsLoading: isLoading,
+            newsError: error,
+            newsValidating: isValidating,
+            newsEmpty: !isLoading && !data?.length,
             mutate,
         }),
         [data, isLoading, error, isValidating, mutate]
@@ -38,14 +38,14 @@ export const useGetUsers = () => {
     return memoizedValue;
 }
 
-export const useGetUserDetail = (userId: string | number) => {
+export const useGetNewsDetail = (newsId: string | number) => {
     const [accessToken, setAccessToken] = useState<string | null>(null);
     useEffect(() => {
         const token = localStorage.getItem(STORAGE_KEY);
         setAccessToken(token);
     }, []);
 
-    const URL = userId ? `${endpoints.users.details}/${userId}` : null;
+    const URL = newsId ? `${endpoints.news.details}/${newsId}` : null;
     const { data, isLoading, error, isValidating, mutate } = useSWR(
         accessToken ? [URL, { headers: { Authorization: `Bearer ${accessToken}` } }] : null,
         fetcher
@@ -53,11 +53,11 @@ export const useGetUserDetail = (userId: string | number) => {
 
     const memoizedValue = useMemo(
         () => ({
-            userDetail: data || {},
-            userDetailLoading: isLoading,
-            userDetailError: error,
-            userDetailValidating: isValidating,
-            userDetailEmpty: !isLoading && !data?.length,
+            newsDetail: data || {},
+            newsDetailLoading: isLoading,
+            newsDetailError: error,
+            newsDetailValidating: isValidating,
+            newsDetailEmpty: !isLoading && !data?.length,
             mutate,
         }),
         [data, isLoading, error, isValidating, mutate]
@@ -66,7 +66,7 @@ export const useGetUserDetail = (userId: string | number) => {
     return memoizedValue;
 }
 
-export const useCreateUsers = (formData: any) => {
+export const useCreateNews = (formData: any) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
@@ -77,12 +77,12 @@ export const useCreateUsers = (formData: any) => {
         setAccessToken(token);
     }, []);
 
-    const createUser = async () => {
+    const createNews = async () => {
         setLoading(true);
         setError(null);
         setSuccess(false);
 
-        const URL = HOST_API + endpoints.users.create; // Ensure you're calling the correct endpoint
+        const URL = HOST_API + endpoints.news.create; // Ensure you're calling the correct endpoint
         try {
             const response = await axios.post(URL, formData, {
                 headers: {
@@ -95,7 +95,7 @@ export const useCreateUsers = (formData: any) => {
         } catch (err) {
             const axiosError = err as AxiosError<ErrorResponse>; // Type AxiosError with expected response structure
             // Safely access error properties with fallback
-            const message = axiosError?.response?.data?.message || 'Error creating the user. Please try again.';
+            const message = axiosError?.response?.data?.message || 'Error creating the News. Please try again.';
             setError(message);
             return { success: false, message };
         } finally {
@@ -104,7 +104,7 @@ export const useCreateUsers = (formData: any) => {
     };
 
     return {
-        createUser,
+        createNews,
         loading,
         error,
     };

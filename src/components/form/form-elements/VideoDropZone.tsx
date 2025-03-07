@@ -2,35 +2,37 @@ import React, { useState } from "react";
 import ComponentCard from "../../common/ComponentCard";
 import { useDropzone } from "react-dropzone";
 
-interface DropzoneComponentProps {
-  onImageUpload: (image: File | null) => void;
+interface VideoDropzoneComponentProps {
+  onVideoUpload: (file: File | null) => void;
 }
 
-const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onImageUpload }) => {
-  const [preview, setPreview] = useState<string | null>(null); // State to store image preview
+const VideoDropzoneComponent: React.FC<VideoDropzoneComponentProps> = ({ onVideoUpload }) => {
+  const [preview, setPreview] = useState<string | null>(null); // State to store video preview
 
   const onDrop = (acceptedFiles: File[]) => {
     console.log("Files dropped:", acceptedFiles);
 
-    // If there are files, create a preview for the first file (assuming it's an image)
+    // If there are files, create a preview for the first file (assuming it's a video)
     const file = acceptedFiles[0];
-    if (file && file.type.startsWith("image")) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string); // Set the image preview as base64 data URL
-        onImageUpload(file); // Update the parent formData state with the image file
-      };
-      reader.readAsDataURL(file); // Read the image as a data URL
+    if (file && file.type.startsWith("video")) {
+      const videoURL = URL.createObjectURL(file); // Create a URL for video preview
+      setPreview(videoURL); // Set video preview as URL
+      onVideoUpload(file); // Update the parent state with the video file
+    } else {
+      // If the file is not a video, reset preview (optional)
+      setPreview(null);
+      alert("Only video files are allowed!");
     }
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      "image/png": [],
-      "image/jpeg": [],
-      "image/webp": [],
-      "image/svg+xml": [],
+      "video/mp4": [],
+      "video/avi": [],
+      "video/mov": [],
+      "video/x-mkv": [],
+      "video/flv": [],
     },
   });
 
@@ -40,8 +42,8 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onImageUpload }) 
         className="transition border border-gray-300 border-dashed cursor-pointer dark:hover:border-brand-500 dark:border-gray-700 rounded-xl hover:border-brand-500"
         style={{
           backgroundImage: preview ? `url(${preview})` : undefined,
-          backgroundSize: preview ? "cover" : "auto",
-          backgroundPosition: preview ? "center" : "initial",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
         <form
@@ -78,29 +80,32 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onImageUpload }) 
 
             {/* Text Content */}
             <h4 className="mb-3 font-semibold text-gray-800 text-theme-xl dark:text-white/90">
-              {isDragActive ? "Drop Files Here" : "Drag & Drop Files Here"}
+              {isDragActive ? "Drop Video Here" : "Drag & Drop Video Here"}
             </h4>
 
             <span className="text-center mb-5 block w-full max-w-[290px] text-sm text-gray-700 dark:text-gray-400">
-              Drag and drop your PNG, JPG, WebP, SVG images here or browse
+              Drag and drop your MP4, AVI, MOV, MKV, FLV videos here or browse
             </span>
 
             <span className="font-medium underline text-theme-sm text-brand-500">
-              Browse File
+              Browse Video
             </span>
           </div>
         </form>
       </div>
 
-      {/* Display preview after file is dropped */}
+      {/* Display video preview after file is dropped */}
       {preview && (
         <div className="mt-4 text-center">
           <h5 className="font-medium text-gray-800 dark:text-white">Preview:</h5>
-          <img src={preview} alt="Preview" className="mt-2 max-w-[200px] mx-auto rounded-lg" />
+          <video controls className="mt-2 max-w-[320px] mx-auto rounded-lg">
+            <source src={preview} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
         </div>
       )}
     </ComponentCard>
   );
 };
 
-export default DropzoneComponent;
+export default VideoDropzoneComponent;

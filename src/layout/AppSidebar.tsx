@@ -3,19 +3,13 @@ import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 // Assume these icons are imported from an icon library
 import {
-  BoxCubeIcon,
   CalenderIcon,
   ChevronDownIcon,
-  GridIcon,
   HorizontaLDots,
-  ListIcon,
-  PageIcon,
-  PieChartIcon,
-  PlugInIcon,
-  TableIcon,
   UserCircleIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
+import { HashIcon, MusicIcon, Settings2Icon } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -52,6 +46,42 @@ const navItems: NavItem[] = [
     subItems: [
       { name: "Add User", path: "/users/add-user" },
       { name: "User List", path: "/users" },
+      // { name: "Verify Users", path: "/admin/verify-users" },
+    ],
+  },
+  {
+    icon: <CalenderIcon />,
+    name: "News Feed Management",
+    subItems: [
+      { name: "Add News", path: "/news/add-news" },
+      { name: "News Feed List", path: "/news" },
+      // { name: "Verify Users", path: "/admin/verify-users" },
+    ],
+  },
+  {
+    icon: <MusicIcon />,
+    name: "Music Management",
+    subItems: [
+      { name: "Add Music", path: "/music/add-music" },
+      { name: "Music List", path: "/music" },
+      // { name: "Verify Users", path: "/admin/verify-users" },
+    ],
+  },
+  {
+    icon: <HashIcon />,
+    name: "Hashtag Management",
+    subItems: [
+      // { name: "Add Music", path: "/music/add-music" },
+      { name: "Hashtag List", path: "/hashtags" },
+      // { name: "Verify Users", path: "/admin/verify-users" },
+    ],
+  },
+  {
+    icon: <Settings2Icon />,
+    name: "CMS Management",
+    subItems: [
+      { name: "Add CMS", path: "/cms/add-cms" },
+      { name: "CMS Page List", path: "/cms" },
       // { name: "Verify Users", path: "/admin/verify-users" },
     ],
   },

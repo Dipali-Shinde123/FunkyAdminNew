@@ -110,15 +110,15 @@ const CreateUser = () => {
     console.log(formData)
     // Check if all required fields are filled
     const requiredFields = [
-      'fullName',
+      formData.type != 'kids' && 'fullName',
       'userName',
       'email',
       'phone',
       'location',
       'password',
-      'gender',
+      formData.type != 'kids' && 'gender',
       'type',
-      'parent_email'
+      formData.type == 'kids' && 'parent_email'
     ];
 
     const isFormValid = requiredFields.every((field) => formData[field as keyof typeof formData] !== "");

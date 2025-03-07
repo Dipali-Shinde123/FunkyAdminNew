@@ -2,47 +2,47 @@ import React, { useState } from "react";
 import ComponentCard from "../../common/ComponentCard";
 import { useDropzone } from "react-dropzone";
 
-interface DropzoneComponentProps {
-  onImageUpload: (image: File | null) => void;
+interface MusicDropzoneComponentProps {
+  onMusicUpload: (music: File | null) => void;
 }
 
-const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onImageUpload }) => {
-  const [preview, setPreview] = useState<string | null>(null); // State to store image preview
+const MusicDropzoneComponent: React.FC<MusicDropzoneComponentProps> = ({ onMusicUpload }) => {
+  const [audioUrl, setAudioUrl] = useState<string | null>(null); // State to store audio file URL
+  const [fileName, setFileName] = useState<string | null>(null); // State to store the audio file name
 
   const onDrop = (acceptedFiles: File[]) => {
-    console.log("Files dropped:", acceptedFiles);
+    console.log("Files dropped:", acceptedFiles); // This will log the files dropped
 
-    // If there are files, create a preview for the first file (assuming it's an image)
     const file = acceptedFiles[0];
-    if (file && file.type.startsWith("image")) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string); // Set the image preview as base64 data URL
-        onImageUpload(file); // Update the parent formData state with the image file
-      };
-      reader.readAsDataURL(file); // Read the image as a data URL
+    
+    if (file) {
+      console.log("Dropped file type:", file.type); // Log the type of the dropped file
+
+      // Check if the file type is audio-based, handling different mime types
+      if (file.type.startsWith("audio")) {
+        const url = URL.createObjectURL(file); // Create a URL for the audio file
+        setAudioUrl(url); // Set the audio preview URL
+        setFileName(file.name); // Set the audio file name
+        onMusicUpload(file); // Update the parent formData state with the music file
+      } else {
+        console.log("The file type is not supported:", file.type);
+        alert("The file type is not supported. Please upload an audio file.");
+      }
+    } else {
+      console.log("No file dropped.");
     }
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: {
-      "image/png": [],
-      "image/jpeg": [],
-      "image/webp": [],
-      "image/svg+xml": [],
-    },
+    accept: "audio/*", // Use a wildcard to accept any audio file type
+    multiple: false,  // Only allow one file at a time
   });
 
   return (
     <ComponentCard>
       <div
         className="transition border border-gray-300 border-dashed cursor-pointer dark:hover:border-brand-500 dark:border-gray-700 rounded-xl hover:border-brand-500"
-        style={{
-          backgroundImage: preview ? `url(${preview})` : undefined,
-          backgroundSize: preview ? "cover" : "auto",
-          backgroundPosition: preview ? "center" : "initial",
-        }}
       >
         <form
           {...getRootProps()}
@@ -78,11 +78,11 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onImageUpload }) 
 
             {/* Text Content */}
             <h4 className="mb-3 font-semibold text-gray-800 text-theme-xl dark:text-white/90">
-              {isDragActive ? "Drop Files Here" : "Drag & Drop Files Here"}
+              {isDragActive ? "Drop Files Here" : "Drag & Drop Music Files Here"}
             </h4>
 
             <span className="text-center mb-5 block w-full max-w-[290px] text-sm text-gray-700 dark:text-gray-400">
-              Drag and drop your PNG, JPG, WebP, SVG images here or browse
+              Drag and drop your MP3, WAV, OGG, M4A audio files here or browse
             </span>
 
             <span className="font-medium underline text-theme-sm text-brand-500">
@@ -92,15 +92,21 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onImageUpload }) 
         </form>
       </div>
 
-      {/* Display preview after file is dropped */}
-      {preview && (
+      {/* Display audio preview after file is dropped */}
+      {audioUrl && (
         <div className="mt-4 text-center">
           <h5 className="font-medium text-gray-800 dark:text-white">Preview:</h5>
-          <img src={preview} alt="Preview" className="mt-2 max-w-[200px] mx-auto rounded-lg" />
+          <div className="mt-2">
+            <audio controls className="mx-auto">
+              <source src={audioUrl} type="audio/mp3" />
+              Your browser does not support the audio element.
+            </audio>
+            <p className="mt-2 text-sm text-gray-700 dark:text-gray-400">{fileName}</p>
+          </div>
         </div>
       )}
     </ComponentCard>
   );
 };
 
-export default DropzoneComponent;
+export default MusicDropzoneComponent;

@@ -74,12 +74,32 @@ export const endpoints = {
         delete: '/admin/user/delete',
         blockUnblock: '/admin/blockUnblockStatus'
     },
-    content: {
-        list: '/admin/user/list',
-        create: '/admin/user-create',
-        details: '/admin/user/show',
-        update: '/admin/user/update',
-        delete: '/admin/user/delete',
-        blockUnblock: '/admin/blockUnblockStatus'
+    news: {
+        list: '/admin/news/list',
+        create: '/admin/news',
+        details: '/admin/news/show',
+        update: '/admin/news/update',
+        delete: '/admin/news/delete',
+    },
+    music: {
+        list: '/admin/music/list',
+        create: '/admin/music',
+        details: '/admin/music/show',
+        update: '/admin/music/update',
+        delete: '/admin/music/delete',
+    },
+    hashtag: {
+        list: '/admin/hashtag/list',
+        // create: '/admin/music',
+        // details: '/admin/music/show',
+        // update: '/admin/music/update',
+        delete: '/admin/hashtag/delete',
+    },
+    cms: {
+        list: '/admin/cms/list',
+        create: '/admin/cms',
+        details: '/admin/music/show',
+        update: '/admin/music/update',
+        delete: '/admin/music/delete',
     }
 };
