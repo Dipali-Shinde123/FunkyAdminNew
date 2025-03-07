@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import BasicTableOne from '../../components/tables/BasicTables/BasicTableOne';
 import { Trash2, EyeIcon } from 'lucide-react';
 import { deleter, endpoints } from '../../utils/axios-dashboard';

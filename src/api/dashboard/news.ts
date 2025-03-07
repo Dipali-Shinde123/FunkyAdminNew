@@ -107,6 +107,7 @@ export const useCreateNews = (formData: any) => {
         createNews,
         loading,
         error,
+        success
     };
 };
 

@@ -107,6 +107,7 @@ export const useCreateCMS = (formData: any) => {
         createCMS,
         loading,
         error,
+        success
     };
 };
 

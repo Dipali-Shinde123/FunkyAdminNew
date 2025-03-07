@@ -1,14 +1,8 @@
 import useSWR from 'swr';
 import { useEffect, useMemo, useState } from 'react';
-import axios, { AxiosError } from 'axios';
 import { fetcher, endpoints } from '../../utils/axios-dashboard';
-import { HOST_API } from '../../config-global';
 
 const STORAGE_KEY = 'token';
-
-interface ErrorResponse {
-    message: string;
-}
 
 export const useGetHashtag = () => {
     const [accessToken, setAccessToken] = useState<string | null>(null);

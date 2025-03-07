@@ -3,12 +3,10 @@ import Label from '../../components/form/Label';
 import Input from '../../components/form/input/InputField';
 import DropzoneComponent from '../../components/form/form-elements/DropZone';
 import Button from '../../components/ui/button/Button';
-import { useCreateUsers } from '../../api/dashboard/user';
 import { useSnackbar } from 'notistack';
 import { useCreateNews } from '../../api/dashboard/news';
-import VideoDropzoneComponent from '../../components/form/form-elements/VideoDropZone';
 import Select from '../../components/form/Select';
-import RichTextEditorComponent from '../../components/form/form-elements/RichTextEditorComponent';
+// import RichTextEditorComponent from '../../components/form/form-elements/RichTextEditorComponent';
 
 const CreateCMS = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -55,12 +53,12 @@ const CreateCMS = () => {
     }));
   };
 
-  const [editorData, setEditorData] = useState<string>('<h1>Initial Content</h1>');
+  // const [editorData, setEditorData] = useState<string>('<h1>Initial Content</h1>');
 
-  const handleEditorChange = (event: Event, editor: any) => {
-    const data = editor.getData();
-    setEditorData(data);
-  };
+  // const handleEditorChange = (event: Event, editor: any) => {
+  //   const data = editor.getData();
+  //   setEditorData(data);
+  // };
 
   const handleNewsSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -147,12 +145,12 @@ const CreateCMS = () => {
             />
           </div>
 
-          <div className="col-span-12">
+          {/* <div className="col-span-12">
             <RichTextEditorComponent
               initialData={editorData}
               onChange={handleEditorChange}
             />
-          </div>
+          </div> */}
 
           <div className='col-span-12 text-center'>
             <Button size="sm" variant="primary">

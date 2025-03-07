@@ -1,7 +1,8 @@
 interface ComponentCardProps {
+  title: string; // Add this!
   children: React.ReactNode;
-  className?: string; // Additional custom classes for styling
-  desc?: string; // Description text
+  className?: string; // Optional additional styling classes
+  desc?: string; // Optional description text
 }
 
 const ComponentCard: React.FC<ComponentCardProps> = ({

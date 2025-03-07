@@ -1,4 +1,5 @@
-import React, { useState, FormEvent } from 'react';
+import * as React from 'react';
+import { useState, FormEvent } from 'react';
 import Label from '../../components/form/Label';
 import Select from '../../components/form/Select';
 import Input from '../../components/form/input/InputField';
@@ -7,6 +8,22 @@ import DropzoneComponent from '../../components/form/form-elements/DropZone';
 import Button from '../../components/ui/button/Button';
 import { useCreateUsers } from '../../api/dashboard/user';
 import { useSnackbar } from 'notistack';
+
+interface FormData {
+  fullName: string;
+  userName: string;
+  email: string;
+  phone: string;
+  location: string;
+  password: string;
+  gender: string;
+  referral_code: string;
+  countryCode: number;
+  parent_email: string;
+  type: string;
+  image: File | null;
+}
+
 
 const userOptions = [
   { value: "Creator", label: "Creator" },
@@ -28,7 +45,7 @@ const CreateUser = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   // Form state that holds all inputs
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     fullName: "",
     userName: "",
     email: "",

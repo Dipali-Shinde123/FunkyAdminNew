@@ -36,7 +36,7 @@ const BasicTableOne: React.FC<BasicTableOneProps> = ({
   const filteredData = tableData.filter((row) => {
     // Check if any of the specified columns contain the search query
     let matchesSearch = false;
-    searchColumns.forEach((col, index) => {
+    searchColumns.forEach((_, index) => {
       const columnValue = row[index]?.toString().toLowerCase() || "";
       if (columnValue.includes(searchQuery.toLowerCase())) {
         matchesSearch = true;

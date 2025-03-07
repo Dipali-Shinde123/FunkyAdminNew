@@ -107,6 +107,7 @@ export const useCreateMusic = (formData: any) => {
         createMusic,
         loading,
         error,
+        success
     };
 };
 

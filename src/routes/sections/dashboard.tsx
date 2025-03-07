@@ -1,4 +1,3 @@
-import React, { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 // import DashboardPage from '../../pages/dashboard/dashboard';
 import { AuthGuard } from '../../auth/guard';

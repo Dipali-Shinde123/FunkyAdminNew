@@ -9,7 +9,7 @@ import {
   UserCircleIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
-import { HashIcon, MusicIcon, Settings2Icon } from "lucide-react";
+import { HashIcon, MusicIcon } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -76,15 +76,15 @@ const navItems: NavItem[] = [
       // { name: "Verify Users", path: "/admin/verify-users" },
     ],
   },
-  {
-    icon: <Settings2Icon />,
-    name: "CMS Management",
-    subItems: [
-      { name: "Add CMS", path: "/cms/add-cms" },
-      { name: "CMS Page List", path: "/cms" },
-      // { name: "Verify Users", path: "/admin/verify-users" },
-    ],
-  },
+  // {
+  //   icon: <Settings2Icon />,
+  //   name: "CMS Management",
+  //   subItems: [
+  //     { name: "Add CMS", path: "/cms/add-cms" },
+  //     { name: "CMS Page List", path: "/cms" },
+  //     // { name: "Verify Users", path: "/admin/verify-users" },
+  //   ],
+  // },
   // {
   //   name: "Forms",
   //   icon: <ListIcon />,

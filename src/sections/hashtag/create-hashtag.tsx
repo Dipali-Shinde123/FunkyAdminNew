@@ -3,7 +3,6 @@ import Label from '../../components/form/Label';
 import Input from '../../components/form/input/InputField';
 import Button from '../../components/ui/button/Button';
 import { useSnackbar } from 'notistack';
-import { useCreateNews } from '../../api/dashboard/news';
 import MusicDropzoneComponent from '../../components/form/form-elements/MusicDropZone';
 import { useCreateMusic } from '../../api/dashboard/music';
 

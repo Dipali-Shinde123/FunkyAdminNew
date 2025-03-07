@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import * as React from "react";
+import { useState } from "react";
 import ComponentCard from "../../common/ComponentCard";
 import { useDropzone } from "react-dropzone";
 
@@ -14,7 +15,7 @@ const MusicDropzoneComponent: React.FC<MusicDropzoneComponentProps> = ({ onMusic
     console.log("Files dropped:", acceptedFiles); // This will log the files dropped
 
     const file = acceptedFiles[0];
-    
+
     if (file) {
       console.log("Dropped file type:", file.type); // Log the type of the dropped file
 
@@ -35,12 +36,17 @@ const MusicDropzoneComponent: React.FC<MusicDropzoneComponentProps> = ({ onMusic
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: "audio/*", // Use a wildcard to accept any audio file type
-    multiple: false,  // Only allow one file at a time
+    accept: {
+      "audio/mpeg": [],   // MP3
+      "audio/wav": [],    // WAV
+      "audio/ogg": [],    // OGG
+      "audio/mp4": [],    // M4A
+    },
+    multiple: false,
   });
 
   return (
-    <ComponentCard>
+    <ComponentCard title="Drop the Music file">
       <div
         className="transition border border-gray-300 border-dashed cursor-pointer dark:hover:border-brand-500 dark:border-gray-700 rounded-xl hover:border-brand-500"
       >

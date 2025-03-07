@@ -1,4 +1,4 @@
-import clsx from "clsx"; // Install with: npm install clsx
+import {clsx} from "clsx"; // Install with: npm install clsx
 
 interface CheckboxProps {
   label?: string;

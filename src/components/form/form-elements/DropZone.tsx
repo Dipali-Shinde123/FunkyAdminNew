@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import * as React from "react";
+import { useState } from "react";
 import ComponentCard from "../../common/ComponentCard";
 import { useDropzone } from "react-dropzone";
 
 interface DropzoneComponentProps {
-  onImageUpload: (image: File | null) => void;
+  onImageUpload: (image: File | null) => void; // Explicitly define the function type
 }
 
 const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onImageUpload }) => {
@@ -35,7 +36,7 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onImageUpload }) 
   });
 
   return (
-    <ComponentCard>
+    <ComponentCard title="">
       <div
         className="transition border border-gray-300 border-dashed cursor-pointer dark:hover:border-brand-500 dark:border-gray-700 rounded-xl hover:border-brand-500"
         style={{
