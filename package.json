@@ -52,6 +52,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
+    "@types/prop-types": "^15.7.14",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@types/react-flatpickr": "^3.8.11",
