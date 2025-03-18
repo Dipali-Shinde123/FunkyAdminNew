@@ -1,17 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import BasicTableOne from '../../components/tables/BasicTables/BasicTableOne';
-import { Trash2, EyeIcon } from 'lucide-react';
+import { Trash2, EyeIcon, Edit } from 'lucide-react';
 import { deleter, endpoints } from '../../utils/axios-dashboard';
 import { useSnackbar } from 'notistack';
 import { useGetNews } from '../../api/dashboard/news';
+import { useGetCMS } from '../../api/dashboard/cms';
+import { useRouter } from '../../routes/hooks';
 
-interface News {
+interface CMS {
   title: string;
   description: string;
-  coverImage: string;
+  subTitle: string;
   image: string;
-  uploadVideo: string;
-  created_at: string;
+  // created_at: string;
   id: number;
   user: {
     id: number;
@@ -22,10 +23,12 @@ interface News {
 
 const CMSPage = () => {
   const { news, newsLoading, mutate: mutateNews } = useGetNews();
+  const { cms, cmsLoading, mutate: mutateCMS } = useGetCMS();
   const [tableData, setTableData] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState(''); // Search query state
   const [selectedFilter, setSelectedFilter] = useState(''); // Filter by selected category or type (if needed)
   const { enqueueSnackbar } = useSnackbar();
+  const router = useRouter();
 
   // Handle deletion of a news item
   const handleDeleteRow = async (id: string | number) => {
@@ -51,48 +54,44 @@ const CMSPage = () => {
     }
   };
 
+  const handleEditRow = useCallback((cmsId: number | '') => {
+    router.push(`/cms/edit-cms/${cmsId}`);
+  }, [router]);
+
   useEffect(() => {
-    if (news?.data) {
-      const updatedTableData = news.data.map((newsItem: News) => [
-        newsItem.title,
-        newsItem.description,
-        newsItem.coverImage ? (
-          <img src={newsItem.coverImage} alt="Cover" className="w-20 h-20 object-cover" />
-        ) : (
-          'No Image'
-        ),
-        newsItem.uploadVideo ? (
-          <video controls className="w-20 h-20 object-cover">
-            <source src={newsItem.uploadVideo} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        ) : (
-          'No Video'
-        ),
-        newsItem.created_at,
+    if (cms?.data) {
+      const updatedTableData = cms.data.map((cmsItem: CMS) => [
+        cmsItem.title,
+        cmsItem.description,
         (
           <div className="flex gap-2">
+            <button
+              type="button"
+              className="text-primary hover:text-blue-900"
+              onClick={() => handleEditRow(cmsItem.id)}>
+              <Edit size={15}/>
+            </button>
             <button type="button" className="text-primary hover:text-blue-900">
-              <EyeIcon />
+              <EyeIcon size={15}/>
             </button>
             <button
               type="button"
-              onClick={() => handleDeleteRow(newsItem.id)}
+              onClick={() => handleDeleteRow(cmsItem.id)}
               className="text-red-500 hover:text-red-700"
             >
-              <Trash2 />
+              <Trash2 size={15}/>
             </button>
           </div>
         ),
       ]);
       setTableData(updatedTableData);
     }
-  }, [news]);
+  }, [cms]);
 
-  const tableHeadings = ['Title', 'Description', 'Cover Image', 'Video', 'Created At', 'Action'];
+  const tableHeadings = ['Title', 'Description', 'Action'];
 
   // Show loading spinner if news data is still loading
-  if (newsLoading) {
+  if (cmsLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="spinner-border animate-spin inline-block w-12 h-12 border-4 rounded-full border-t-transparent border-primary" role="status">

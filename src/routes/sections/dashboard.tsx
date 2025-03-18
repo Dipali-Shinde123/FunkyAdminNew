@@ -12,6 +12,7 @@ import HashtagViewPage from '../../pages/hashtag/view-hashtag';
 import HashtagCreatePage from '../../pages/hashtag/create-hashtag';
 import CMSViewPage from '../../pages/cms/view-cms';
 import CMSCreatePage from '../../pages/cms/create-cms';
+import CMSEditPage from '../../pages/cms/edit-cms';
 
 export const dashboardRoutes = [
     {
@@ -76,7 +77,7 @@ export const dashboardRoutes = [
                     { element: <CMSViewPage />, index: true },
                     { path: 'add-cms', element: <CMSCreatePage /> },
                     // { path: ':id', element: <UserDetailPage /> },
-                    // { path: 'edit-user/:id', element: <UserEditPage /> },
+                    { path: 'edit-cms/:id', element: <CMSEditPage /> },
 
                 ],
             },

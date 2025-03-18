@@ -111,42 +111,48 @@ export const useCreateCMS = (formData: any) => {
     };
 };
 
-// export const useUpdateCategories = (categoryId: string | number, formData: any) => {
-//     const [loading, setLoading] = useState(false);
-//     const [error, setError] = useState<string | null>(null);
-//     const [accessToken, setAccessToken] = useState<string | null>(null);
+export const useUpdateCMS = (cmsId: string | number, formData: any) => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [accessToken, setAccessToken] = useState<string | null>(null);
 
-//     useEffect(() => {
-//         const token = localStorage.getItem(STORAGE_KEY);
-//         setAccessToken(token);
-//     }, []);
+    useEffect(() => {
+        const token = localStorage.getItem(STORAGE_KEY);
+        setAccessToken(token);
+    }, []);
 
-//     const updateCategory = async () => {
-//         setLoading(true);
-//         setError(null);
+    const updateCMS = async () => {
+        setLoading(true);
+        setError(null);
 
-//         const URL = `${HOST_API + endpoints.users.update}/${categoryId}`;
-//         try {
-//             const response = await axios.post(URL, formData, {
-//                 headers: {
-//                     Authorization: `Bearer ${accessToken}`,
-//                     'Content-Type': 'multipart/form-data',
-//                 },
-//             });
+        const URL = `${HOST_API + endpoints.cms.update}/${cmsId}`;
+        try {
+            const response = await axios.post(URL, formData, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
 
-//             return { success: true, data: response.data };
-//         } catch (error) {
-//             const axiosError = error as AxiosError;
-//             setError(axiosError.response?.data?.message || 'Something went wrong.');
-//             return { success: false, message: axiosError.response?.data?.message || 'Something went wrong.' };
-//         } finally {
-//             setLoading(false);
-//         }
-//     };
+            return { success: true, data: response.data };
+        } catch (error) {
+            // Cast the error as an AxiosError to access the response data
+            const axiosError = error as AxiosError<ErrorResponse>;
 
-//     return {
-//         updateCategory,
-//         loading,
-//         error,
-//     };
-// };
+            // Safely access the error message
+            const message = axiosError.response?.data?.message || 'Something went wrong.';
+            console.log(message);
+            setError(message);
+
+            return { success: false, message };
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return {
+        updateCMS,
+        loading,
+        error,
+    };
+};

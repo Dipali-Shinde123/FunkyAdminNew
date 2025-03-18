@@ -98,8 +98,8 @@ export const endpoints = {
     cms: {
         list: '/admin/cms/list',
         create: '/admin/cms',
-        details: '/admin/music/show',
-        update: '/admin/music/update',
-        delete: '/admin/music/delete',
+        details: '/admin/cms/show',
+        update: '/admin/cms/update',
+        delete: '/admin/cms/delete',
     }
 };

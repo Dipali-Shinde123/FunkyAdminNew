@@ -6,6 +6,7 @@ import Button from '../../components/ui/button/Button';
 import { useSnackbar } from 'notistack';
 import { useCreateNews } from '../../api/dashboard/news';
 import Select from '../../components/form/Select';
+import RichTextEditorComponent from '../../components/form/form-elements/RichTextEditorComponent';
 // import RichTextEditorComponent from '../../components/form/form-elements/RichTextEditorComponent';
 
 const CreateCMS = () => {
@@ -46,19 +47,27 @@ const CreateCMS = () => {
   const { createNews, loading } = useCreateNews(formData);
 
   // Handle the image/video upload and set corresponding file
-  const handleImageUpload = (imageType: 'image' | 'coverImage', file: File | null) => {
+  const handleImageUpload = (field: string, file: File | null) => {
+    // Handle the file upload logic here
+    // e.g., update formData with the file for 'image' field
+    if (file) {
+      setFormData((prevData) => ({
+        ...prevData,
+        [field]: file, // Save the file (or file URL if you're uploading it)
+      }));
+    }
+  };
+
+
+  const [editorData, setEditorData] = useState<string>('');
+
+  const handleEditorChange = (value: string) => {
     setFormData((prevData) => ({
       ...prevData,
-      [imageType]: file, // Set the corresponding file in the formData
+      description: value
     }));
   };
 
-  // const [editorData, setEditorData] = useState<string>('<h1>Initial Content</h1>');
-
-  // const handleEditorChange = (event: Event, editor: any) => {
-  //   const data = editor.getData();
-  //   setEditorData(data);
-  // };
 
   const handleNewsSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -117,22 +126,32 @@ const CreateCMS = () => {
           </div>
 
           <div className="col-span-12">
-            <Label htmlFor="description" required={true}>Description</Label>
+            <Label htmlFor="sub-title" required={true}>Sub Title</Label>
             <Input
               type="text"
-              id="description"
-              name="description"
-              placeholder="Enter the description of the article"
-              value={formData.description}
+              id="sub-title"
+              name="subTitle"
+              placeholder="Enter the sub title of the article"
+              value={formData.subTitle}
               onChange={handleInputChange}
+            />
+          </div>
+
+          <div className="col-span-12">
+            <Label htmlFor="description" required={true}>Description</Label>
+            <RichTextEditorComponent
+              initialData={formData.description}
+              onChange={handleEditorChange}
             />
           </div>
 
           <div className="col-span-12">
             <Label htmlFor="image" required={true}>Upload Image</Label>
             <DropzoneComponent
-              onImageUpload={(file) => handleImageUpload('image', file)}
+              value={formData.image ? URL.createObjectURL(formData.image) : null} // Use object URL for file preview
+              onImageUpload={(file) => handleImageUpload('image', file)} // Pass file to handleImageUpload
             />
+
           </div>
 
           <div className="col-span-12">
@@ -140,17 +159,11 @@ const CreateCMS = () => {
             <Select
               options={positionOptions}
               placeholder="Select an option"
+              value={formData.position}
               onChange={(value) => handleSelectChange(value, 'position')}
               className="dark:bg-dark-900"
             />
           </div>
-
-          {/* <div className="col-span-12">
-            <RichTextEditorComponent
-              initialData={editorData}
-              onChange={handleEditorChange}
-            />
-          </div> */}
 
           <div className='col-span-12 text-center'>
             <Button size="sm" variant="primary">

@@ -1,27 +1,28 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ComponentCard from "../../common/ComponentCard";
 import { useDropzone } from "react-dropzone";
 
 interface DropzoneComponentProps {
-  onImageUpload: (image: File | null) => void; // Explicitly define the function type
+  onImageUpload: (image: File | null) => void; // Function to handle the file upload
+  value: string | null; // For preview (URL or base64 string)
 }
 
-const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onImageUpload }) => {
-  const [preview, setPreview] = useState<string | null>(null); // State to store image preview
+const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onImageUpload, value }) => {
+  const [preview, setPreview] = useState<string | null>(); // State to store image preview
+  useEffect(() => {
+    setPreview(value)
+  }, [])
 
   const onDrop = (acceptedFiles: File[]) => {
-    console.log("Files dropped:", acceptedFiles);
-
-    // If there are files, create a preview for the first file (assuming it's an image)
     const file = acceptedFiles[0];
     if (file && file.type.startsWith("image")) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result as string); // Set the image preview as base64 data URL
-        onImageUpload(file); // Update the parent formData state with the image file
+        onImageUpload(file); // Pass the file back to the parent component
       };
-      reader.readAsDataURL(file); // Read the image as a data URL
+      reader.readAsDataURL(file);
     }
   };
 
@@ -37,14 +38,7 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onImageUpload }) 
 
   return (
     <ComponentCard title="">
-      <div
-        className="transition border border-gray-300 border-dashed cursor-pointer dark:hover:border-brand-500 dark:border-gray-700 rounded-xl hover:border-brand-500"
-        style={{
-          backgroundImage: preview ? `url(${preview})` : undefined,
-          backgroundSize: preview ? "cover" : "auto",
-          backgroundPosition: preview ? "center" : "initial",
-        }}
-      >
+      <div className="transition border border-gray-300 border-dashed cursor-pointer dark:hover:border-brand-500 dark:border-gray-700 rounded-xl hover:border-brand-500">
         <form
           {...getRootProps()}
           className={`dropzone rounded-xl border-dashed border-gray-300 p-7 lg:p-10
@@ -52,13 +46,9 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onImageUpload }) 
               ? "border-brand-500 bg-gray-100 dark:bg-gray-800"
               : "border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-gray-900"
             }`}
-          id="demo-upload"
         >
-          {/* Hidden Input */}
           <input {...getInputProps()} />
-
           <div className="dz-message flex flex-col items-center !m-0">
-            {/* Icon Container */}
             <div className="mb-[22px] flex justify-center">
               <div className="flex h-[68px] w-[68px] items-center justify-center rounded-full bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-400">
                 <svg
@@ -77,7 +67,6 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onImageUpload }) 
               </div>
             </div>
 
-            {/* Text Content */}
             <h4 className="mb-3 font-semibold text-gray-800 text-theme-xl dark:text-white/90">
               {isDragActive ? "Drop Files Here" : "Drag & Drop Files Here"}
             </h4>
@@ -86,14 +75,11 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onImageUpload }) 
               Drag and drop your PNG, JPG, WebP, SVG images here or browse
             </span>
 
-            <span className="font-medium underline text-theme-sm text-brand-500">
-              Browse File
-            </span>
+            <span className="font-medium underline text-theme-sm text-brand-500">Browse File</span>
           </div>
         </form>
       </div>
 
-      {/* Display preview after file is dropped */}
       {preview && (
         <div className="mt-4 text-center">
           <h5 className="font-medium text-gray-800 dark:text-white">Preview:</h5>
