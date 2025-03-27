@@ -6,7 +6,8 @@ import {
   CalenderIcon,
   ChevronDownIcon,
   HorizontaLDots,
-  UserCircleIcon,
+ UserCircleIcon,
+  UserIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 import { HashIcon, MusicIcon, Settings2Icon } from "lucide-react";
@@ -47,6 +48,15 @@ const navItems: NavItem[] = [
       { name: "Add User", path: "/users/add-user" },
       { name: "User List", path: "/users" },
       // { name: "Verify Users", path: "/admin/verify-users" },
+    ],
+  },
+  {
+    icon: <UserIcon />,
+    name: "Manage User Content",
+    subItems: [
+      { name: "Add Post", path: "/posts/add-post" },
+      { name: "User Content List", path: "/contents/user-content" },
+      {name: " Add Story", path: "/story/add-story"},
     ],
   },
   {

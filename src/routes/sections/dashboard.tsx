@@ -13,6 +13,9 @@ import HashtagCreatePage from '../../pages/hashtag/create-hashtag';
 import CMSViewPage from '../../pages/cms/view-cms';
 import CMSCreatePage from '../../pages/cms/create-cms';
 import CMSEditPage from '../../pages/cms/edit-cms';
+import UserAddPostCreate from '../../pages/post/add-post';
+import UserContentList from '../../pages/post/user-content';
+import UserCreateStrory from '../../pages/post/Create-Story';
 
 export const dashboardRoutes = [
     {
@@ -81,6 +84,22 @@ export const dashboardRoutes = [
 
                 ],
             },
+            {
+                path: 'posts', 
+                children: [
+                    { path: 'add-post', element: <UserAddPostCreate/>}, 
+                ],
+            },
+            {
+                path: 'contents',
+                children: [
+                    {path: 'user-content', element: <UserContentList/>},
+                ]
+            },
+            { path: 'story',
+           children:[
+                {path: 'add-story', element: <UserCreateStrory/> }
+            ]}
         ],
     },
 ];

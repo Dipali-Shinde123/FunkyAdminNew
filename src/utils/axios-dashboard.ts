@@ -101,5 +101,12 @@ export const endpoints = {
         details: '/admin/cms/show',
         update: '/admin/cms/update',
         delete: '/admin/cms/delete',
+    },
+    countries: {
+        list: '/admin/country/list',
+        create: '/admin/country-create',
+        details: '/admin/country/show',
+        update: '/admin/country/update',
+        delete: '/admin/country/delete',
     }
 };

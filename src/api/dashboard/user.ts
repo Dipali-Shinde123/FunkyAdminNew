@@ -66,38 +66,43 @@ export const useGetUserDetail = (userId: string | number) => {
     return memoizedValue;
 }
 
-export const useCreateUsers = (formData: any) => {
+export const useCreateUsers = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
-    const [accessToken, setAccessToken] = useState<string | null>(null);
 
-    useEffect(() => {
-        const token = localStorage.getItem(STORAGE_KEY);
-        setAccessToken(token);
-    }, []);
-
-    const createUser = async () => {
+    const createUser = async (formData: any) => {
         setLoading(true);
         setError(null);
         setSuccess(false);
 
-        const URL = HOST_API + endpoints.users.create; // Ensure you're calling the correct endpoint
+        const URL = HOST_API + endpoints.users.create;
+        const token = localStorage.getItem(STORAGE_KEY);
+
         try {
             const response = await axios.post(URL, formData, {
                 headers: {
-                    Authorization: `Bearer ${accessToken}`,
+                    Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
                 },
             });
+
             setSuccess(true);
-            return { success: true, data: response.data };
+            return {
+                success: true,
+                message: response.data.message || 'User created successfully',
+                data: response.data.data,
+                status: response.status,
+            };
         } catch (err) {
-            const axiosError = err as AxiosError<ErrorResponse>; // Type AxiosError with expected response structure
-            // Safely access error properties with fallback
+            const axiosError = err as AxiosError<ErrorResponse>;
             const message = axiosError?.response?.data?.message || 'Error creating the user. Please try again.';
             setError(message);
-            return { success: false, message };
+            return {
+                success: false,
+                message,
+                status: axiosError?.response?.status || 500,
+            };
         } finally {
             setLoading(false);
         }
@@ -107,9 +112,10 @@ export const useCreateUsers = (formData: any) => {
         createUser,
         loading,
         error,
-        success
+        success,
     };
 };
+
 
 // export const useUpdateCategories = (categoryId: string | number, formData: any) => {
 //     const [loading, setLoading] = useState(false);

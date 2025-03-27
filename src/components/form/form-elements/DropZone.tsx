@@ -5,7 +5,7 @@ import { useDropzone } from "react-dropzone";
 
 interface DropzoneComponentProps {
   onImageUpload: (image: File | null) => void; // Function to handle the file upload
-  value: string | null; // For preview (URL or base64 string)
+  value: File | null // For preview (URL or base64 string)
 }
 
 const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onImageUpload, value }) => {

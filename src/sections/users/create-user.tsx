@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent,useEffect } from 'react';
 import Label from '../../components/form/Label';
 import Select from '../../components/form/Select';
 import Input from '../../components/form/input/InputField';
@@ -8,44 +8,17 @@ import DropzoneComponent from '../../components/form/form-elements/DropZone';
 import Button from '../../components/ui/button/Button';
 import { useCreateUsers } from '../../api/dashboard/user';
 import { useSnackbar } from 'notistack';
-
-interface FormData {
-  fullName: string;
-  userName: string;
-  email: string;
-  phone: string;
-  location: string;
-  password: string;
-  gender: string;
-  referral_code: string;
-  countryCode: number;
-  parent_email: string;
-  type: string;
-  image: File | null;
+import { fetchCountries} from "../../api/dashboard/postApi";
+ 
+interface Country {
+  id: number;
+  name: string;
 }
-
-
-const userOptions = [
-  { value: "Creator", label: "Creator" },
-  { value: "Advertiser", label: "Advertiser" },
-  { value: "Kids", label: "Kids" },
-];
-
-const genderOptions = [
-  { value: "male", label: "Male" },
-  { value: "female", label: "Female" },
-  { value: "transgender", label: "Transgender" },
-];
-
-const countryOptions = [
-  { value: "india", label: "India" },
-];
-
 const CreateUser = () => {
   const { enqueueSnackbar } = useSnackbar();
+   const [countries, setCountries] = useState<Country[]>([]);
 
-  // Form state that holds all inputs
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState({
     fullName: "",
     userName: "",
     email: "",
@@ -57,7 +30,7 @@ const CreateUser = () => {
     countryCode: 91,
     parent_email: "",
     type: "",
-    image: null, // For the file upload
+    image: null as File | null,
   });
 
   const [error, setError] = useState({
@@ -65,94 +38,100 @@ const CreateUser = () => {
     phone: false,
     parent_email: false,
   });
-  const [showPassword, setShowPassword] = useState(false);
 
-  // Handle changes for all form fields
+  const [showPassword, setShowPassword] = useState(false);
+  const { createUser, loading } = useCreateUsers();
+
+   useEffect(() => {
+      const loadData = async () => {
+        try {
+          const [countriesData] = await Promise.all([
+            fetchCountries(),
+            
+          ]);
+          setCountries(countriesData);
+         
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+      loadData();
+    }, []);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
-    // If the field is 'email', validate it
-    if (name === 'email') {
-      const isValidEmail =
-        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
-      setError((prevErrors) => ({
-        ...prevErrors,
-        email: !isValidEmail, // Set email error state
-      }));
+    if (name === "email" || name === "parent_email") {
+      const isValidEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
+      setError((prev) => ({ ...prev, [name]: !isValidEmail }));
     }
 
-    if (name === 'parent_email') {
-      const isValidEmail =
-        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
-      setError((prevErrors) => ({
-        ...prevErrors,
-        parent_email: !isValidEmail, // Set email error state
-      }));
+    if (name === "phone") {
+      const isValidPhone = /^\d{10}$/.test(value);
+      setError((prev) => ({ ...prev, phone: !isValidPhone }));
     }
 
-    // If the field is 'phone', validate that it has exactly 10 digits
-    if (name === 'phone') {
-      const isValidPhone = /^\d{10}$/.test(value); // Checks if the phone number has exactly 10 digits
-      setError((prevErrors) => ({
-        ...prevErrors,
-        phone: !isValidPhone, // Set phone error state
-      }));
-    }
-
-    // Update form data for all fields
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSelectChange = (value: string, name: string) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  // Inside CreateUser Component
 
-  const { createUser, loading } = useCreateUsers(formData);
+const handleSelectChange = (option: { label: string; value: string } | string, name: string) => {
+  const value = typeof option === "string" ? option : option?.value;
+  setFormData((prev) => ({ ...prev, [name]: value }));
+};
 
-  const handleImageUpload = (image: File | null) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      image, // Update the image in the formData state
-    }));
-  };
+const handleImageUpload = (file: File | null) => {
+  setFormData((prev) => ({ ...prev, image: file }));
+};
+
 
   const handleUserSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData)
-    // Check if all required fields are filled
-    const requiredFields = [
-      formData.type != 'kids' && 'fullName',
-      'userName',
-      'email',
-      'phone',
-      'location',
-      'password',
-      formData.type != 'kids' && 'gender',
-      'type',
-      formData.type == 'kids' && 'parent_email'
-    ];
 
-    const isFormValid = requiredFields.every((field) => formData[field as keyof typeof formData] !== "");
+    const requiredFields = [
+      formData.type !== "Kids" && "fullName",
+      "userName",
+      "email",
+      "phone",
+      "location",
+      "password",
+      formData.type !== "Kids" && "gender",
+      "type",
+      formData.type === "Kids" && "parent_email",
+      formData.type !== "Kids" && "referral_code",
+    ].filter(Boolean);
+    console.log("Required Fields:", requiredFields);
+    console.log("Form Data:", formData);
+
+
+    const isFormValid = requiredFields.every(
+      (field) => formData[field as keyof typeof formData] !== ""
+    );
 
     if (!isFormValid) {
-      enqueueSnackbar("Please enter all the required fields", { variant: 'error' });
+      enqueueSnackbar("Please enter all the required fields", { variant: "error" });
       return;
     }
 
-    // If there are any errors in the fields, prevent form submission
-    if (error.email || error.phone) {
-      enqueueSnackbar("Please correct the errors before submitting.", { variant: 'error' });
+    if (error.email || error.phone || error.parent_email) {
+      enqueueSnackbar("Please correct the errors before submitting.", { variant: "error" });
       return;
     }
 
     try {
-      const result = await createUser();
+      const result = await createUser(formData);
+
+      const responseFormat = {
+        status: result.success,
+        message: result.success ? "User added successfully" : "User creation failed",
+        data: result.data || null,
+        
+
+      };
+      window.location.reload();
+
+      console.log("Postman Style Response:", responseFormat);
+
       if (result.success) {
         setFormData({
           fullName: "",
@@ -167,60 +146,75 @@ const CreateUser = () => {
           parent_email: "",
           type: "",
           image: null,
-        })
-        enqueueSnackbar("User Added Successfully", { variant: 'success' });
+        });
+        enqueueSnackbar("User Added Successfully", { variant: "success" });
       } else {
-        enqueueSnackbar("Error while adding user", { variant: 'error' });
-        console.error("Error while adding user");
+        enqueueSnackbar("Error while adding user", { variant: "error" });
       }
     } catch (err) {
-      console.error(err);
+      console.error("Error:", err);
+      const errorResponse = {
+        status: false,
+        message: "Server error occurred",
+        data: null,
+      };
+      console.log("Postman Style Error Response:", errorResponse);
+      enqueueSnackbar("An unexpected error occurred", { variant: "error" });
     }
   };
 
   return (
     <div>
       <div className="heading">Add a User</div>
-      <form onSubmit={handleUserSubmit}>
+      <form className="sm:4 md:6 lg:12" onSubmit={handleUserSubmit}>
         <div className="input-fields mt-5 grid grid-cols-12 gap-3">
+          {/* Type */}
           <div className="col-span-12">
             <Label required={true}>Select Type</Label>
-            <Select
-              options={userOptions}
-              placeholder="Select an option"
-              onChange={(value) => handleSelectChange(value, 'type')}
-              className="dark:bg-dark-900"
-            />
+          <Select
+  label="User Type"
+  value={formData.type} // tumcha state madhla value
+  options={[
+    { label: "Creator", value: "Creator" },
+    { label: "Advertiser", value: "Advertiser" },
+    { label: "Kids", value: "Kids" },
+  ]}
+  placeholder="Select type"
+  onChange={(value) => handleSelectChange("type", value)}
+  className="mb-4"
+ />
+
           </div>
 
-          {
-            formData.type === "Kids" ? ''
-              :
-              <div className="col-span-12">
-                <Label htmlFor="fullName" required={true}>Full Name</Label>
-                <Input
-                  type="text"
-                  id="fullName"
-                  name="fullName"
-                  placeholder="John Sams"
-                  value={formData.fullName}
-                  onChange={handleInputChange}
-                />
-              </div>
-          }
+          {/* Full Name */}
+          {formData.type !== "Kids" && (
+            <div className="col-span-12">
+              <Label htmlFor="fullName" required={true}>Full Name</Label>
+              <Input
+                type="text"
+                id="fullName"
+                name="fullName"
+                placeholder="John Sams"
+                value={formData.fullName}
+                onChange={handleInputChange}
+              />
+            </div>
+          )}
 
+          {/* Username */}
           <div className="col-span-12">
             <Label htmlFor="userName" required={true}>User Name (Unique)</Label>
             <Input
               type="text"
               id="userName"
               name="userName"
-              placeholder="John Sams"
+              placeholder="john_sams"
               value={formData.userName}
               onChange={handleInputChange}
             />
           </div>
 
+          {/* Email */}
           <div className="col-span-12">
             <Label required={true}>Email</Label>
             <Input
@@ -234,29 +228,35 @@ const CreateUser = () => {
             />
           </div>
 
+          {/* Phone */}
           <div className="col-span-12">
             <Label htmlFor="phone" required={true}>Phone</Label>
             <Input
               type="number"
               id="phone"
               name="phone"
-              placeholder="+911234567891"
+              placeholder="1234567890"
               value={formData.phone}
               onChange={handleInputChange}
               hint={error.phone ? "Phone number should be exactly 10 digits." : ""}
             />
           </div>
 
+          {/* Location */}
           <div className="col-span-12">
             <Label required={true}>Location (Country)</Label>
             <Select
-              options={countryOptions}
-              placeholder="Select Country"
-              onChange={(value) => handleSelectChange(value, 'location')}
-              className="dark:bg-dark-900"
-            />
+  label="Country"
+  value={formData.location} // assuming `location` field is used for country
+  options={countries.map((c) => ({ value: c.name, label: c.name }))}
+  placeholder="Select Country"
+  onChange={(value) => setFormData((prev) => ({ ...prev, location: value }))}
+  className="mb-4"
+/>
+
           </div>
 
+          {/* Password */}
           <div className="col-span-12">
             <Label required={true}>Password</Label>
             <div className="relative">
@@ -268,6 +268,7 @@ const CreateUser = () => {
                 onChange={handleInputChange}
               />
               <button
+                type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
               >
@@ -280,59 +281,71 @@ const CreateUser = () => {
             </div>
           </div>
 
-          {
-            formData.type === "Kids" ? ''
-              :
-              <div className="col-span-12">
-                <Label required={true}>Gender</Label>
-                <Select
-                  options={genderOptions}
-                  placeholder="Select Gender"
-                  onChange={(value) => handleSelectChange(value, 'gender')}
-                  className="dark:bg-dark-900"
-                />
-              </div>
-          }
-          {
-            formData.type === "Kids" ?
-              <div className="col-span-12">
-                <Label required={true}>Parent Email</Label>
-                <Input
-                  type="email"
-                  name="parent_email"
-                  value={formData.parent_email}
-                  error={error.parent_email}
-                  onChange={handleInputChange}
-                  placeholder="Enter your parent email"
-                  hint={error.parent_email ? "This is an invalid email address." : ""}
-                />
-              </div> : ""
-          }
+          {/* Gender */}
+          {formData.type !== "Kids" && (
+            <div className="col-span-12">
+              <Label required={true}>Gender</Label>
+              <Select
+  label="Gender"
+  value={formData.gender}
+  options={[
+    { label: "Male", value: "Male" },
+    { label: "Female", value: "Female" },
+    { label: "Other", value: "Other" },
+  ]}
+  placeholder="Select gender"
+  onChange={(value) => handleSelectChange("gender", value)}
+  className="mb-4"
+/>
 
-          {
-            formData.type === "Kids" ? "" :
-              <div className="col-span-12">
-                <Label htmlFor="referral_code">Referral Code (Optional)</Label>
-                <Input
-                  type="text"
-                  id="referral_code"
-                  name="referral_code"
-                  placeholder="Type your referral code here!"
-                  value={formData.referral_code}
-                  onChange={handleInputChange}
-                />
-              </div>
-          }
+            </div>
+          )}
 
+          {/* Parent Email */}
+          {formData.type === "Kids" && (
+            <div className="col-span-12">
+              <Label required={true}>Parent Email</Label>
+              <Input
+                type="email"
+                name="parent_email"
+                value={formData.parent_email}
+                error={error.parent_email}
+                onChange={handleInputChange}
+                placeholder="Enter parent's email"
+                hint={error.parent_email ? "Invalid parent email address." : ""}
+              />
+            </div>
+          )}
+
+          {/* Referral Code */}
+          {formData.type !== "Kids" && (
+            <div className="col-span-12">
+              <Label htmlFor="referral_code" required={true}>Referral Code</Label>
+              <Input
+                type="text"
+                name="referral_code"
+                placeholder="Enter referral code"
+                value={formData.referral_code}
+                onChange={handleInputChange}
+              />
+            </div>
+          )}
+
+          {/* Profile Image Upload */}
           <div className="col-span-12">
-            <DropzoneComponent onImageUpload={handleImageUpload} />
-          </div>
+            <Label>Upload Image</Label>
+            <DropzoneComponent
+  value={formData.image} // ya formData.profilePhoto, jo bhi tum use kar rahi ho
+  onImageUpload={handleImageUpload}
+/>
 
-          <div className='col-span-12 text-center'>
-            <Button size="sm" variant="primary">
-              {loading ? "Adding User..." : "Add User"}
-            </Button>
           </div>
+        </div>
+
+        <div className="mt-5 flex justify-end">
+          <Button type="submit" disabled={loading}>
+            {loading ? "Submitting..." : "Submit"}
+          </Button>
         </div>
       </form>
     </div>

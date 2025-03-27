@@ -1,8 +1,9 @@
 import useSWR from 'swr';
-import { useEffect, useMemo, useState } from 'react';
 import axios, { AxiosError } from 'axios';
+import { useEffect, useMemo, useState } from 'react';
 import { fetcher, endpoints } from '../../utils/axios-dashboard';
 import { HOST_API } from '../../config-global';
+import { useSnackbar } from 'notistack';
 
 const STORAGE_KEY = 'token';
 
@@ -12,6 +13,7 @@ interface ErrorResponse {
 
 export const useGetMusic = () => {
     const [accessToken, setAccessToken] = useState<string | null>(null);
+    
     useEffect(() => {
         const token = localStorage.getItem(STORAGE_KEY);
         setAccessToken(token);
@@ -23,7 +25,7 @@ export const useGetMusic = () => {
         fetcher
     );
 
-    const memoizedValue = useMemo(
+    return useMemo(
         () => ({
             music: data || [],
             musicLoading: isLoading,
@@ -34,55 +36,21 @@ export const useGetMusic = () => {
         }),
         [data, isLoading, error, isValidating, mutate]
     );
+};
 
-    return memoizedValue;
-}
-
-export const useGetMusicDetail = (musicId: string | number) => {
-    const [accessToken, setAccessToken] = useState<string | null>(null);
-    useEffect(() => {
-        const token = localStorage.getItem(STORAGE_KEY);
-        setAccessToken(token);
-    }, []);
-
-    const URL = musicId ? `${endpoints.music.details}/${musicId}` : null;
-    const { data, isLoading, error, isValidating, mutate } = useSWR(
-        accessToken ? [URL, { headers: { Authorization: `Bearer ${accessToken}` } }] : null,
-        fetcher
-    );
-
-    const memoizedValue = useMemo(
-        () => ({
-            musicDetail: data || {},
-            musicDetailLoading: isLoading,
-            musicDetailError: error,
-            musicDetailValidating: isValidating,
-            musicDetailEmpty: !isLoading && !data?.length,
-            mutate,
-        }),
-        [data, isLoading, error, isValidating, mutate]
-    );
-
-    return memoizedValue;
-}
-
-export const useCreateMusic = (formData: any) => {
+export const useCreateMusic = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
-    const [accessToken, setAccessToken] = useState<string | null>(null);
+    const { enqueueSnackbar } = useSnackbar();
 
-    useEffect(() => {
-        const token = localStorage.getItem(STORAGE_KEY);
-        setAccessToken(token);
-    }, []);
-
-    const createMusic = async () => {
+    const createMusic = async (formData: FormData) => {
         setLoading(true);
         setError(null);
         setSuccess(false);
+        const URL = `${HOST_API}${endpoints.music.create}`;
+        const accessToken = localStorage.getItem(STORAGE_KEY);
 
-        const URL = HOST_API + endpoints.music.create; // Ensure you're calling the correct endpoint
         try {
             const response = await axios.post(URL, formData, {
                 headers: {
@@ -91,62 +59,78 @@ export const useCreateMusic = (formData: any) => {
                 },
             });
             setSuccess(true);
+            enqueueSnackbar('Music created successfully!', { variant: 'success' });
             return { success: true, data: response.data };
         } catch (err) {
-            const axiosError = err as AxiosError<ErrorResponse>; // Type AxiosError with expected response structure
-            // Safely access error properties with fallback
-            const message = axiosError?.response?.data?.message || 'Error creating the News. Please try again.';
+            const axiosError = err as AxiosError<ErrorResponse>;
+            const message = axiosError?.response?.data?.message || 'Error creating the music.';
             setError(message);
+            enqueueSnackbar(message, { variant: 'error' });
             return { success: false, message };
         } finally {
             setLoading(false);
         }
     };
 
-    return {
-        createMusic,
-        loading,
-        error,
-        success
-    };
+    return { createMusic, loading, error, success };
 };
 
-// export const useUpdateCategories = (categoryId: string | number, formData: any) => {
-//     const [loading, setLoading] = useState(false);
-//     const [error, setError] = useState<string | null>(null);
-//     const [accessToken, setAccessToken] = useState<string | null>(null);
+export const useUpdateMusic = () => {
+    const { enqueueSnackbar } = useSnackbar();
 
-//     useEffect(() => {
-//         const token = localStorage.getItem(STORAGE_KEY);
-//         setAccessToken(token);
-//     }, []);
+    const updateMusic = async (musicId: string | number, formData: FormData) => {
+        if (!musicId) return { success: false, message: 'Music ID is required.' };
 
-//     const updateCategory = async () => {
-//         setLoading(true);
-//         setError(null);
+        const URL = `${HOST_API}${endpoints.music.update}/${musicId}`;
+        console.log('API URL:', URL);
+        const accessToken = localStorage.getItem(STORAGE_KEY);
 
-//         const URL = `${HOST_API + endpoints.users.update}/${categoryId}`;
-//         try {
-//             const response = await axios.post(URL, formData, {
-//                 headers: {
-//                     Authorization: `Bearer ${accessToken}`,
-//                     'Content-Type': 'multipart/form-data',
-//                 },
-//             });
+        try {
+            console.log("FormData before sending:", Array.from((formData as any).entries()));
+            const response = await axios.post(URL, formData, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            enqueueSnackbar('Music updated successfully!', { variant: 'success' });
+            return { success: true, data: response.data };
+        } catch (err) {
+            const axiosError = err as AxiosError<ErrorResponse>;
+            console.error('Error Response:', axiosError.response?.data);
+            const message = axiosError?.response?.data?.message || 'Error updating the music.';
+            enqueueSnackbar(message, { variant: 'error' });
+            return { success: false, message };
+        }
+    };
 
-//             return { success: true, data: response.data };
-//         } catch (error) {
-//             const axiosError = error as AxiosError;
-//             setError(axiosError.response?.data?.message || 'Something went wrong.');
-//             return { success: false, message: axiosError.response?.data?.message || 'Something went wrong.' };
-//         } finally {
-//             setLoading(false);
-//         }
-//     };
+    return { updateMusic };
+};
 
-//     return {
-//         updateCategory,
-//         loading,
-//         error,
-//     };
-// };
+export const useDeleteMusic = () => {
+    const { enqueueSnackbar } = useSnackbar();
+
+    const deleteMusic = async (musicId: string | number) => {
+        if (!musicId) return { success: false, message: 'Music ID is required.' };
+
+        const URL = `${HOST_API}${endpoints.music.delete}/${musicId}`;
+        const accessToken = localStorage.getItem(STORAGE_KEY);
+
+        try {
+            await axios.delete(URL, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            enqueueSnackbar('Music deleted successfully!', { variant: 'success' });
+            return { success: true };
+        } catch (err) {
+            const axiosError = err as AxiosError<ErrorResponse>;
+            const message = axiosError?.response?.data?.message || 'Error deleting the music.';
+            enqueueSnackbar(message, { variant: 'error' });
+            return { success: false, message };
+        }
+    };
+
+    return { deleteMusic };
+};
