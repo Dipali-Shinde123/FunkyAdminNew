@@ -125,7 +125,7 @@ const AddPost: React.FC = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-6 border border-gray-200">
+    <div className="w-full h-full ">
       <h2 className="text-2xl font-bold text-gray-800 text-center mb-4">Add Post</h2>
       <form className="space-y-5" onSubmit={handleSubmit}>
       

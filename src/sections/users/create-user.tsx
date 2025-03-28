@@ -342,7 +342,7 @@ const handleImageUpload = (file: File | null) => {
           </div>
         </div>
 
-        <div className="mt-5 flex justify-end">
+        <div className="mt-5 flex justify-center">
           <Button type="submit" disabled={loading}>
             {loading ? "Submitting..." : "Submit"}
           </Button>

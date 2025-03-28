@@ -4,31 +4,42 @@ import ComponentCard from "../../common/ComponentCard";
 import { useDropzone } from "react-dropzone";
 
 interface DropzoneComponentProps {
-  onImageUpload: (image: File | null) => void; // Function to handle the file upload
-  value: File | null // For preview (URL or base64 string)
+  value: File | null;
+  onChange: (file: File | null) => void;
+  accept?: string;
 }
 
-const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onImageUpload, value }) => {
-  const [preview, setPreview] = useState<string | null>(); // State to store image preview
+const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ value, onChange, accept }) => {
+  const [preview, setPreview] = useState<string | null>(null);
+
   useEffect(() => {
-    setPreview(value)
-  }, [])
+    if (value) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(value);
+    } else {
+      setPreview(null);
+    }
+  }, [value]);
 
   const onDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
-    if (file && file.type.startsWith("image")) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string); // Set the image preview as base64 data URL
-        onImageUpload(file); // Pass the file back to the parent component
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreview(reader.result as string);
+      onChange(file);
+    };
+    reader.readAsDataURL(file);
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: {
+    multiple: false,
+    accept: accept || {
       "image/png": [],
       "image/jpeg": [],
       "image/webp": [],
@@ -72,7 +83,7 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onImageUpload, va
             </h4>
 
             <span className="text-center mb-5 block w-full max-w-[290px] text-sm text-gray-700 dark:text-gray-400">
-              Drag and drop your PNG, JPG, WebP, SVG images here or browse
+              Drag and drop your files here or browse
             </span>
 
             <span className="font-medium underline text-theme-sm text-brand-500">Browse File</span>
@@ -83,7 +94,21 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onImageUpload, va
       {preview && (
         <div className="mt-4 text-center">
           <h5 className="font-medium text-gray-800 dark:text-white">Preview:</h5>
-          <img src={preview} alt="Preview" className="mt-2 max-w-[200px] mx-auto rounded-lg" />
+          {value?.type.startsWith("image") && (
+            <img src={preview} alt="Preview" className="mt-2 max-w-[200px] mx-auto rounded-lg" />
+          )}
+          {value?.type.startsWith("audio") && (
+            <audio controls className="mt-2 mx-auto w-full max-w-md">
+              <source src={preview} type={value.type} />
+              Your browser does not support the audio element.
+            </audio>
+          )}
+          {value?.type.startsWith("video") && (
+            <video controls className="mt-2 max-w-[300px] mx-auto rounded-lg">
+              <source src={preview} type={value.type} />
+              Your browser does not support the video element.
+            </video>
+          )}
         </div>
       )}
     </ComponentCard>

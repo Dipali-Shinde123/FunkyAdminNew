@@ -74,6 +74,33 @@ export const useCreateMusic = () => {
 
     return { createMusic, loading, error, success };
 };
+export const useGetMusicDetail = (musicId: string | number) => {
+    const [accessToken, setAccessToken] = useState<string | null>(null);
+    useEffect(() => {
+        const token = localStorage.getItem(STORAGE_KEY);
+        setAccessToken(token);
+    }, []);
+
+    const URL = musicId ? `${endpoints.music.details}/${musicId}` : null;
+    const { data, isLoading, error, isValidating, mutate } = useSWR(
+        accessToken ? [URL, { headers: { Authorization: `Bearer ${accessToken}` } }] : null,
+        fetcher
+    );
+
+    const memoizedValue = useMemo(
+        () => ({
+            musicDetail: data || {},
+            musicDetailLoading: isLoading,
+            musicDetailError: error,
+            musicDetailValidating: isValidating,
+            musicDetailEmpty: !isLoading && !data?.length,
+            mutate,
+        }),
+        [data, isLoading, error, isValidating, mutate]
+    );
+
+    return memoizedValue;
+}
 
 export const useUpdateMusic = () => {
     const { enqueueSnackbar } = useSnackbar();

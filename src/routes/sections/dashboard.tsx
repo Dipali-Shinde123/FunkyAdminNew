@@ -16,6 +16,8 @@ import CMSEditPage from '../../pages/cms/edit-cms';
 import UserAddPostCreate from '../../pages/post/add-post';
 import UserContentList from '../../pages/post/user-content';
 import UserCreateStrory from '../../pages/post/Create-Story';
+import EditViewPage from '../../pages/news-feed/View-Edit';
+import EditMusicviewPage from '../../pages/music/Edit-music';
 
 export const dashboardRoutes = [
     {
@@ -50,7 +52,7 @@ export const dashboardRoutes = [
                     { element: <NewsViewPage />, index: true },
                     { path: 'add-news', element: <NewsCreatePage /> },
                     // { path: ':id', element: <UserDetailPage /> },
-                    // { path: 'edit-user/:id', element: <UserEditPage /> },
+                    { path: 'edit-news/:id', element: <EditViewPage /> },
 
                 ],
             },
@@ -60,7 +62,7 @@ export const dashboardRoutes = [
                     { element: <MusicViewPage />, index: true },
                     { path: 'add-music', element: <MusicCreatePage /> },
                     // { path: ':id', element: <UserDetailPage /> },
-                    // { path: 'edit-user/:id', element: <UserEditPage /> },
+                    { path: 'edit-music/:id', element: <EditMusicviewPage/> },
 
                 ],
             },

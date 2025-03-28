@@ -65,24 +65,22 @@ const BasicTableOne: React.FC<BasicTableOneProps> = ({
   };
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-      <div className="max-w-full overflow-x-auto">
-        <div className="min-w-[1102px]">
+    <div className="p-4 space-y-10 sm:4 md:6 lg:12">
           {/* Search Bar and Dropdown Filter */}
-          <div className="my-4 px-6 flex gap-4 items-center justify-between">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search..."
-              className="px-4 py-2 border border-gray-300 rounded-md w-full sm:w-80 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              className="w-full md:w-1/3 border rounded px-4 py-2 shadow-sm"
             />
             {
               showFilter && (
                 <select
                   value={selectedFilter}
                   onChange={(e) => setSelectedFilter(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-md w-full sm:w-56 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                  className="w-full md:w-1/3 border rounded px-4 py-2 shadow-sm"
                 >
                   <option value="">Filter by Role</option>
                   <option value="Creator">Creator</option>
@@ -95,14 +93,14 @@ const BasicTableOne: React.FC<BasicTableOneProps> = ({
             <select
               value={itemsPerPage}
               onChange={handleItemsPerPageChange}
-              className="px-4 py-2 border border-gray-300 rounded-md w-full sm:w-56 text-gray-700 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              className="w-full md:w-1/3 border rounded px-4 py-2 shadow-sm"
             >
               <option value={5}>5 rows</option>
               <option value={10}>10 rows</option>
               <option value={20}>20 rows</option>
             </select>
           </div>
-
+          <div className="w-full overflow-x-auto">
           <Table>
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
               <TableRow>
@@ -114,7 +112,7 @@ const BasicTableOne: React.FC<BasicTableOneProps> = ({
               </TableRow>
             </TableHeader>
 
-            <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+            <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] sm:4 md:6 lg:12">
               {currentItems.map((row, rowIndex) => (
                 <TableRow key={rowIndex}>
                   {row.map((cell, cellIndex) => (
@@ -136,7 +134,7 @@ const BasicTableOne: React.FC<BasicTableOneProps> = ({
               ))}
             </TableBody>
           </Table>
-
+</div>
           <div className="flex justify-between items-center my-4 px-6">
             <button
               onClick={() => handlePageChange(currentPage - 1)}
@@ -165,8 +163,7 @@ const BasicTableOne: React.FC<BasicTableOneProps> = ({
             </button>
           </div>
         </div>
-      </div>
-    </div>
+     
   );
 };
 

@@ -3,7 +3,8 @@ import BasicTableOne from '../../components/tables/BasicTables/BasicTableOne';
 import { Trash2, Edit } from 'lucide-react';
 import { deleter, endpoints } from '../../utils/axios-dashboard';
 import { useSnackbar } from 'notistack';
-import { useGetNews, useUpdateNews } from '../../api/dashboard/news';
+import { useGetNews } from '../../api/dashboard/news';
+import { useNavigate } from 'react-router-dom'; // ✅ New
 
 interface News {
   title: string;
@@ -16,47 +17,15 @@ interface News {
 
 const NewsPage = () => {
   const { news, newsLoading, mutate: mutateNews } = useGetNews();
-  const { updatenews } = useUpdateNews();
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate(); // ✅ New
 
   const [tableData, setTableData] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('');
 
-  // Edit Modal State
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [editData, setEditData] = useState<News | null>(null);
-
   const handleEditRow = (newsItem: News) => {
-    setEditData(newsItem);
-    setEditModalOpen(true);
-  };
-
-  const handleUpdate = async () => {
-    if (!editData) return;
-    try {
-      const formData = new FormData();
-      formData.append('title', editData.title);
-      formData.append('description', editData.description);
-      
-      if (editData.coverImage && typeof editData.coverImage !== 'string') {
-        formData.append('coverImage', editData.coverImage);
-      }
-      if (editData.uploadVideo && typeof editData.uploadVideo !== 'string') {
-        formData.append('uploadVideo', editData.uploadVideo);
-      }
-
-      const result = await updatenews(editData.id, formData);
-      if (result.success) {
-        enqueueSnackbar('News updated successfully!', { variant: 'success' });
-        mutateNews();
-        setEditModalOpen(false);
-      } else {
-        enqueueSnackbar(result.message, { variant: 'error' });
-      }
-    } catch (error) {
-      enqueueSnackbar('Failed to update news.', { variant: 'error' });
-    }
+    navigate(`/news/edit-news/${newsItem.id}`); // ✅ Navigate to edit page
   };
 
   const handleDeleteRow = async (id: number) => {
@@ -119,45 +88,6 @@ const NewsPage = () => {
         searchColumns={['title', 'description']}
         showFilter={false}
       />
-
-      {editModalOpen && editData && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg w-96">
-            <h2 className="text-xl font-bold mb-4">Edit News</h2>
-            <input
-              type="text"
-              className="w-full p-2 border rounded mb-4 sm:text-sm"
-              value={editData.title}
-              onChange={(e) => setEditData({ ...editData, title: e.target.value })}
-            />
-            <textarea
-              className="w-full p-2 border rounded mb-4 sm:text-sm"
-              value={editData.description}
-              onChange={(e) => setEditData({ ...editData, description: e.target.value })}
-            />
-            <label className="block text-gray-700">Cover Image:</label>
-            {editData.coverImage && typeof editData.coverImage === 'string' && (
-              <img src={editData.coverImage} className="w-full h-32 object-cover mb-4" alt="Cover" />
-            )}
-            <input
-              type="file"
-              accept="image/*"
-              className="w-full p-2 border rounded mb-4"
-              onChange={(e) => setEditData({ ...editData, coverImage: e.target.files?.[0] || editData.coverImage })}
-            />
-            <label className="block text-gray-700">Upload Video:</label>
-            <input
-              type="file"
-              accept="video/*"
-              className="w-full p-2 border rounded mb-4"
-              onChange={(e) => setEditData({ ...editData, uploadVideo: e.target.files?.[0] || editData.uploadVideo })}
-            />
-            <button onClick={handleUpdate} className="bg-blue-500 text-white px-4 py-2 rounded">
-              Update
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
