@@ -130,7 +130,7 @@ const handleImageUpload = (file: File | null) => {
       };
       window.location.reload();
 
-      console.log("Postman Style Response:", responseFormat);
+      console.log("Create User Successfully:", responseFormat);
 
       if (result.success) {
         setFormData({
