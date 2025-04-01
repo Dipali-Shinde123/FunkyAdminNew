@@ -73,7 +73,7 @@ const CreateUser = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Inside CreateUser Component
+  
 
 const handleSelectChange = (option: { label: string; value: string } | string, name: string) => {
   const value = typeof option === "string" ? option : option?.value;
@@ -168,25 +168,25 @@ const handleImageUpload = (file: File | null) => {
       <div className="heading">Add a User</div>
       <form className="sm:4 md:6 lg:12" onSubmit={handleUserSubmit}>
         <div className="input-fields mt-5 grid grid-cols-12 gap-3">
-          {/* Type */}
+       
           <div className="col-span-12">
             <Label required={true}>Select Type</Label>
           <Select
   label="User Type"
-  value={formData.type} // tumcha state madhla value
+  value={formData.type} 
   options={[
     { label: "Creator", value: "Creator" },
     { label: "Advertiser", value: "Advertiser" },
     { label: "Kids", value: "Kids" },
   ]}
   placeholder="Select type"
-  onChange={(value) => handleSelectChange("type", value)}
+  onChange={(value) => handleSelectChange(value ,"type")}
   className="mb-4"
  />
 
           </div>
 
-          {/* Full Name */}
+         
           {formData.type !== "Kids" && (
             <div className="col-span-12">
               <Label htmlFor="fullName" required={true}>Full Name</Label>
@@ -294,7 +294,7 @@ const handleImageUpload = (file: File | null) => {
     { label: "Other", value: "Other" },
   ]}
   placeholder="Select gender"
-  onChange={(value) => handleSelectChange("gender", value)}
+  onChange={(value) => handleSelectChange( value , "gender")}
   className="mb-4"
 />
 
