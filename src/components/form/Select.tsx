@@ -20,6 +20,7 @@ const Select: React.FC<SelectProps> = ({
   onChange,
   className = "",
   value,
+
 }) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

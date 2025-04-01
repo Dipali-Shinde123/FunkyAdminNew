@@ -8,9 +8,10 @@ import {
   HorizontaLDots,
  UserCircleIcon,
   UserIcon,
+  
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
-import { HashIcon, MusicIcon, Settings2Icon } from "lucide-react";
+import { HashIcon, MusicIcon, Settings2Icon,Megaphone } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -75,6 +76,14 @@ const navItems: NavItem[] = [
       { name: "Add Music", path: "/music/add-music" },
       { name: "Music List", path: "/music" },
       // { name: "Verify Users", path: "/admin/verify-users" },
+    ],
+  },
+  {
+    icon: <Megaphone/>,
+    name:"Advertise Management",
+    subItems: [
+      {name:"Add Advertise", path: "/advertisement/add-advertisement"},
+      {name:"Advertise List", path: "/advertisement/view-advertisemt"}
     ],
   },
   {

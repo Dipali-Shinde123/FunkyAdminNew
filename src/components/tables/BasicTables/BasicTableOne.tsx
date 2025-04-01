@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../ui/tab
 
 // Define the type for the data being passed
 interface BasicTableOneProps {
-  tableData: (string | null)[][]; // Array of arrays containing strings or null values
+  tableData: (string | number | React.ReactNode | null)[][]; // Array of arrays containing strings or null values
   tableHeadings: string[];
   searchQuery: string;
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>;

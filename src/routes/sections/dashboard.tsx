@@ -18,6 +18,11 @@ import UserContentList from '../../pages/post/user-content';
 import UserCreateStrory from '../../pages/post/Create-Story';
 import EditViewPage from '../../pages/news-feed/View-Edit';
 import EditMusicviewPage from '../../pages/music/Edit-music';
+import { Children } from 'react';
+import { element } from 'prop-types';
+import CreateAdvertisement from '../../sections/advertisement/CreateAdvertisement';
+import CreateAdvertiseViewPage from '../../pages/Advertise/Create-addvertise';
+import AdvertiseViewPage from '../../pages/Advertise/View-Advertise';
 
 export const dashboardRoutes = [
     {
@@ -101,7 +106,16 @@ export const dashboardRoutes = [
             { path: 'story',
            children:[
                 {path: 'add-story', element: <UserCreateStrory/> }
-            ]}
+            ]},
+
+            {
+                path: 'advertisement',
+                children:[
+                    {path: 'add-advertisement', element: <CreateAdvertiseViewPage/>},
+                    {path: 'view-advertisemt', element: <AdvertiseViewPage/>}
+                ]
+            }
+
         ],
     },
 ];

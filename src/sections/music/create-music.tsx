@@ -126,7 +126,7 @@ const CreateMusic = () => {
           </div>
 
           <div className='col-span-12 text-center'>
-            <Button size="sm" variant="primary">
+            <Button type='submit' size="sm" variant="primary">
               {loading ? "Adding Music..." : "Add Music"}
             </Button>
           </div>

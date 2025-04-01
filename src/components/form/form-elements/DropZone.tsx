@@ -7,6 +7,7 @@ interface DropzoneComponentProps {
   value: File | null;
   onChange: (file: File | null) => void;
   accept?: string;
+  
 }
 
 const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ value, onChange, accept }) => {
@@ -32,6 +33,7 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ value, onChange, 
     reader.onloadend = () => {
       setPreview(reader.result as string);
       onChange(file);
+     
     };
     reader.readAsDataURL(file);
   };
@@ -45,6 +47,7 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ value, onChange, 
       "image/webp": [],
       "image/svg+xml": [],
     },
+
   });
 
   return (
