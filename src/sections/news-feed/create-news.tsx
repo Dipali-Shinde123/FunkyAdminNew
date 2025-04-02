@@ -120,14 +120,16 @@ const CreateNews = () => {
           <div className="col-span-12">
             <Label htmlFor="image" required={true}>News Feed Image</Label>
             <DropzoneComponent
-              onImageUpload={(file) => handleImageUpload('image', file)}
+            value={formData.image}
+              onChange={(file) => handleImageUpload('image', file)}
             />
           </div>
 
           <div className="col-span-12">
             <Label htmlFor="coverImage" required={true}>Cover Image</Label>
             <DropzoneComponent
-              onImageUpload={(file) => handleImageUpload('coverImage', file)}
+            value={formData.coverImage}
+              onChange={(file) => handleImageUpload('coverImage', file)}
             />
           </div>
 
@@ -139,7 +141,7 @@ const CreateNews = () => {
           </div>
 
           <div className='col-span-12 text-center'>
-            <Button size="sm" variant="primary">
+            <Button type='submit' size="sm" variant="primary">
               {loading ? "Adding News..." : "Add News"}
             </Button>
           </div>

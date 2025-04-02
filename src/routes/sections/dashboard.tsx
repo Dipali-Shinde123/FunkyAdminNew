@@ -23,6 +23,11 @@ import { element } from 'prop-types';
 import CreateAdvertisement from '../../sections/advertisement/CreateAdvertisement';
 import CreateAdvertiseViewPage from '../../pages/Advertise/Create-addvertise';
 import AdvertiseViewPage from '../../pages/Advertise/View-Advertise';
+import CreateRewordPage from '../../pages/Rewords/Create-Reword';
+import RewordsViewPage from '../../pages/Rewords/View-Rewords';
+import CreatePPVviewPage from '../../pages/PPV/Create-PPV';
+import PPVViewPage from '../../pages/PPV/View-PPV';
+import EditPPVViewPage from '../../pages/PPV/Edit-PPV';
 
 export const dashboardRoutes = [
     {
@@ -113,6 +118,24 @@ export const dashboardRoutes = [
                 children:[
                     {path: 'add-advertisement', element: <CreateAdvertiseViewPage/>},
                     {path: 'view-advertisemt', element: <AdvertiseViewPage/>}
+                ]
+            },
+
+            {
+                path: 'reword',
+                children:[
+                       {path: 'add-reword', element:<CreateRewordPage/>},
+                       {path: 'view-reword', element:<RewordsViewPage/>}
+                      
+                ]
+            },
+            {
+                path: 'PPV',
+                children: [
+                    {path: 'add-ppv', element:<CreatePPVviewPage/>},
+                    {path: 'view-ppv', element:<PPVViewPage/>},
+                    {path: 'Edit-ppv/:id', element:<EditPPVViewPage/>}
+                    
                 ]
             }
 

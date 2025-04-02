@@ -53,7 +53,7 @@ const EditNewsPage = () => {
   return (
     <div>
       <div className="back">
-        <Link to={'/categories'} className='flex items-center gap-x-2 bg-gradient-to-r from-[#14ADD6] to-[#384295] bg-clip-text text-transparent'>
+        <Link to={'/news'} className='flex items-center gap-x-2 bg-gradient-to-r from-[#14ADD6] to-[#384295] bg-clip-text text-transparent'>
           <span className='text-[30px]'>{`<`}</span>
           <span>Back</span>
         </Link>

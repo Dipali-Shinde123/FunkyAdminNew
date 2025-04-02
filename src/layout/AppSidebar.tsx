@@ -11,7 +11,7 @@ import {
   
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
-import { HashIcon, MusicIcon, Settings2Icon,Megaphone } from "lucide-react";
+import { HashIcon, MusicIcon, Settings2Icon,Megaphone, MonitorPlay, Gift} from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -87,6 +87,28 @@ const navItems: NavItem[] = [
     ],
   },
   {
+    icon:<MonitorPlay/>,
+    name:"PPV Management",
+    subItems:[
+      {name:"Add PPV", path: "/PPV/add-ppv"},
+      {name:"PPV List", path: "/PPV/view-ppv"},
+      
+    ]
+    
+
+  },
+  {
+    icon:<Gift/>,
+    name:"Rewords Management",
+    subItems:
+    [
+       {name:"Add Reword", path: "/reword/add-reword"},
+       {name:"Reword List", path:"/reword/view-reword"}
+    ]
+  },
+
+  {
+
     icon: <HashIcon />,
     name: "Hashtag Management",
     subItems: [
