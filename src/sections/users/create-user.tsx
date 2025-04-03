@@ -173,6 +173,8 @@ const handleImageUpload = (file: File | null) => {
             <Label required={true}>Select Type</Label>
           <Select
   label="User Type"
+  id='user'
+  name='user'
   value={formData.type} 
   options={[
     { label: "Creator", value: "Creator" },

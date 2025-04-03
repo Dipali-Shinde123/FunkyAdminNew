@@ -18,9 +18,6 @@ import UserContentList from '../../pages/post/user-content';
 import UserCreateStrory from '../../pages/post/Create-Story';
 import EditViewPage from '../../pages/news-feed/View-Edit';
 import EditMusicviewPage from '../../pages/music/Edit-music';
-import { Children } from 'react';
-import { element } from 'prop-types';
-import CreateAdvertisement from '../../sections/advertisement/CreateAdvertisement';
 import CreateAdvertiseViewPage from '../../pages/Advertise/Create-addvertise';
 import AdvertiseViewPage from '../../pages/Advertise/View-Advertise';
 import CreateRewordPage from '../../pages/Rewords/Create-Reword';
@@ -28,6 +25,10 @@ import RewordsViewPage from '../../pages/Rewords/View-Rewords';
 import CreatePPVviewPage from '../../pages/PPV/Create-PPV';
 import PPVViewPage from '../../pages/PPV/View-PPV';
 import EditPPVViewPage from '../../pages/PPV/Edit-PPV';
+import CreateEffectPage from '../../pages/Effect/Create-Effect';
+import EffectListPage from '../../pages/Effect/Effect-List';
+import EditEffectPage from '../../pages/Effect/Edit-Effect';
+import DashbordViewPage from '../../pages/dashbord/view-dashbord';
 
 export const dashboardRoutes = [
     {
@@ -42,10 +43,10 @@ export const dashboardRoutes = [
             </AuthGuard>
         ),
         children: [
-            // {
-            //     path: 'dashboard',
-            //     element: <DashboardPage />,
-            // },
+            {
+                
+                element: <DashbordViewPage/>, index: true
+            },
             {
                 path: 'users',
                 children: [
@@ -136,6 +137,15 @@ export const dashboardRoutes = [
                     {path: 'view-ppv', element:<PPVViewPage/>},
                     {path: 'Edit-ppv/:id', element:<EditPPVViewPage/>}
                     
+                ]
+            },
+
+            {
+                path: 'Effect',
+                children: [
+                    {path: 'add-effect', element:<CreateEffectPage/>},
+                    {path: 'effect-list', element:<EffectListPage/>},
+                    {path: 'edit-effect/:id', element:<EditEffectPage/>}
                 ]
             }
 

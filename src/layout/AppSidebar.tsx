@@ -11,7 +11,7 @@ import {
   
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
-import { HashIcon, MusicIcon, Settings2Icon,Megaphone, MonitorPlay, Gift} from "lucide-react";
+import { HashIcon, MusicIcon, Settings2Icon,Megaphone, MonitorPlay, Gift,Sliders} from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -105,6 +105,15 @@ const navItems: NavItem[] = [
        {name:"Add Reword", path: "/reword/add-reword"},
        {name:"Reword List", path:"/reword/view-reword"}
     ]
+  },
+  {
+    icon:<Sliders/>,
+    name:"Effect Management",
+    subItems:
+    [
+       {name:"Add Effect", path: "/Effect/add-effect"},
+       {name:"Effect List", path:"/Effect/effect-list"},
+ ]
   },
 
   {
