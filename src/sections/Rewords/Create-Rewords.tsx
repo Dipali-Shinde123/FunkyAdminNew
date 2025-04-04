@@ -72,8 +72,11 @@ const AddRewardsForm = () => {
                { label: 'Approved', value: 'Approved' },
             ]}
           />
-          <Button type="submit" size="sm" variant="primary">Add Reward</Button>
+          {/* <Button type="submit" size="sm" variant="primary">Add Reward</Button> */}
         </div>
+        <div className='col-span-12 text-center mt-7'>
+                    <Button type='submit' size="sm" variant="primary">Add Reword</Button>
+                  </div>
       </form>
     </div>
   );

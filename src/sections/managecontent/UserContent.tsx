@@ -144,27 +144,27 @@ const UserContent: React.FC = () => {
   const currentData = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   return (
-    <div className="p-4 space-y-10">
+    <div className="p-4 space-y-10 dark:text-gray-300 dark:bg-gray-800">
       <h2 className="text-2xl md:text-3xl font-bold text-center">User Content List</h2>
 
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 dark:text-gray-300 dark:bg-gray-800">
         <input
           type="text"
           placeholder="Search By User Name..."
-          className="w-full md:w-1/3 border rounded px-4 py-2 shadow-sm"
+          className="w-full md:w-1/3 border rounded px-4 py-2 shadow-sm dark:text-gray-300 dark:bg-gray-800"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
         <input
           type="date"
-          className="w-full md:w-1/4 border rounded px-4 py-2 shadow-sm"
+          className="w-full md:w-1/4 border rounded px-4 py-2 shadow-sm dark:text-gray-300 dark:bg-gray-800"
         />
       </div>
 
       <div className="overflow-x-auto border rounded-lg">
-        <table className="min-w-full bg-white text-sm text-center">
-          <thead className="bg-gray-100">
-            <tr className="text-xs uppercase text-gray-700">
+        <table className="min-w-full bg-white text-sm text-center dark:text-gray-300 dark:bg-gray-800">
+          <thead className="bg-gray-100 dark:text-gray-300 dark:bg-gray-800">
+            <tr className="text-xs uppercase text-bold-medium">
               <th className="p-2">#</th>
               <th className="p-2">User</th>
               <th className="p-2 hidden sm:table-cell">Tagline</th>

@@ -4,6 +4,12 @@ import Select from "../../components/form/Select";
 import Input from "../../components/form/input/InputField";
 import { fetchCountries, fetchUsers, createPost } from "../../api/dashboard/postApi";
 import { useSnackbar } from "notistack";
+import Button from "../../components/ui/button/Button";
+import DropzoneComponent from "../../components/form/form-elements/DropZone";
+
+
+
+
 
 interface Country {
   id: number;
@@ -75,14 +81,11 @@ const AddPost: React.FC = () => {
     }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, files } = e.target;
-    if (files && files.length > 0) {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: files[0],
-      }));
-    }
+  const handleFileChange = (file: File | null, field: keyof FormData) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: file,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -126,10 +129,12 @@ const AddPost: React.FC = () => {
 
   return (
     <div className="w-full h-full ">
-      <h2 className="text-2xl font-bold text-gray-800 text-center mb-4">Add Post</h2>
-      <form className="space-y-5" onSubmit={handleSubmit}>
-      
+      <h2 className="text-2xl  text-gray-800 text-center mb-4">Add Post</h2>
+      <form className="space-y-4" onSubmit={handleSubmit}>
+      <Label>Select User</Label>
 <Select
+id="user"
+name="user"
 label="Select User"
   value={formData.userId || ""} // Add the current selected value from your form state
   options={users.map((u) => ({ value: String(u.id), label: u.username }))}
@@ -141,11 +146,10 @@ label="Select User"
     }))
   }
 />
-
-
-       
-        
+<Label>Tagpeople</Label>
 <Select
+id="tag"
+name="tag"
 label="Tagpeople"
   value={formData.tagPeople?.[0]?.value || ""} // Add this line to provide the current selected value
   options={users.map((u) => ({ value: String(u.id), label: u.username }))}
@@ -162,10 +166,10 @@ label="Tagpeople"
     }))
   }
 />
-
-
-       
-        <Select
+<Label>Select Country</Label>
+       <Select
+        id="country"
+        name="country"
        label="Country"
        value={formData.address} // assuming `location` field is used for country
        options={countries.map((c) => ({ value: c.name, label: c.name }))}
@@ -173,37 +177,38 @@ label="Tagpeople"
       onChange={(value) => setFormData((prev) => ({ ...prev, address: value }))}
   
 />
-
-
-        <Label>Description</Label>
+ <Label>Description</Label>
         <Input type="text" name="description" value={formData.description} onChange={handleChange} />
 
         <Label>Upload Media</Label>
-        <input type="file" name="media" accept="image/*,video/*" onChange={handleFileChange} />
+        <DropzoneComponent accept="image/*,video/*" value={formData.media} onChange={(file:any) => handleFileChange(file, "media")} />
+      
 
         <Label>Cover Image</Label>
-        <input type="file" name="coverImage" accept="image/*" onChange={handleFileChange} />
+        <DropzoneComponent accept="image/*" value={formData.coverImage} onChange={(file : any) => handleFileChange(file, "coverImage")} />
 
-        <div className="flex flex-col space-y-3">
-          <label className="flex items-center space-x-2">
-            <input type="checkbox" name="enableDownload" checked={formData.enableDownload} onChange={handleChange} />
+        <div className="grid grid-cols-3 gap-4">
+          <Label className="flex items-center space-x-2">
+            <input type="checkbox" name="enableDownload" checked={formData.enableDownload} onChange={handleChange}  className="form-checkbox h-5 w-5 text-blue-600"/>
             <span>Enable Download</span>
-          </label>
+          </Label>
 
-          <label className="flex items-center space-x-2">
-            <input type="checkbox" name="enableComment" checked={formData.enableComment} onChange={handleChange} />
+          <Label className="flex items-center space-x-2">
+            <input type="checkbox" name="enableComment" checked={formData.enableComment} onChange={handleChange}  className="form-checkbox h-5 w-5 text-blue-600"/>
             <span>Enable Comment</span>
-          </label>
+          </Label>
 
-          <label className="flex items-center space-x-2">
-            <input type="checkbox" name="allowAds" checked={formData.allowAds} onChange={handleChange} />
+          <Label className="flex items-center space-x-2">
+            <input type="checkbox" name="allowAds" checked={formData.allowAds} onChange={handleChange} className="form-checkbox h-5 w-5 text-blue-600"/>
             <span>Allow Ads</span>
-          </label>
+          </Label>
         </div>
-
-        <button type="submit" className="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">
-          Submit
-        </button>
+   <div className="text-center">
+   <Button size='sm' variant='primary' type="submit" >
+          Add Post
+        </Button>
+   </div>
+        
       </form>
     </div>
   );

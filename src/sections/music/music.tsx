@@ -57,7 +57,7 @@ const MusicPage = () => {
         musicItem.isActive === "1" ? "Active" : "Inactive",
         musicItem.created_at,
         (
-          <div className="flex gap-2" key={musicItem.id}>
+          <div className="flex gap-2 dark:text-gray-300 dark:bg-gray-800" key={musicItem.id}>
             <button onClick={() => handleEditRow(musicItem)} className="text-blue-500 hover:text-blue-700">
               <Edit size={18} />
             </button>
@@ -66,7 +66,7 @@ const MusicPage = () => {
             </button>
           </div>
         ),
-        <audio controls className="w-32 max-w-full" key={`audio-${musicItem.id}`}>
+        <audio controls className="w-32 max-w-full dark:text-gray-300 dark:bg-gray-800" key={`audio-${musicItem.id}`}>
           <source src={musicItem.music_file} type="audio/mp3" />
         </audio>,
       ]);
@@ -77,7 +77,7 @@ const MusicPage = () => {
   const tableHeadings = ["Song Name", "Artist Name", "Price", "Status", "Created At", "Action", "Preview"];
 
   return (
-    <div className="p-4  sm:4 md:6 lg:12 sm:p-6 md:p-8 w-full">
+    <div className="p-4  sm:4 md:6 lg:12 sm:p-6 md:p-8 w-full dark:text-gray-300 dark:bg-gray-800">
       {musicLoading ? (
         <div className="text-center text-gray-500">Loading music data...</div>
       ) : (

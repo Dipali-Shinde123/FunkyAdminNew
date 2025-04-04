@@ -105,7 +105,9 @@ const AddEffect = () => {
         <Label>Upload Effect File</Label>
         <DropzoneComponent value={formData.file} onChange={handleFileUpload} />
 
-        <Button type="submit">Submit</Button>
+       <div className='col-span-12 text-center'>
+                   <Button type='submit' size="sm" variant="primary">Add Effect</Button>
+                 </div>
       </form>
     </div>
   );

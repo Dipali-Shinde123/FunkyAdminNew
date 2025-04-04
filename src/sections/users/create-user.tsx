@@ -167,7 +167,7 @@ const handleImageUpload = (file: File | null) => {
     <div>
       <div className="heading">Add a User</div>
       <form className="sm:4 md:6 lg:12" onSubmit={handleUserSubmit}>
-        <div className="input-fields mt-5 grid grid-cols-12 gap-3">
+        <div className="input-fields mt-5 grid grid-cols-12 gap-3 ">
        
           <div className="col-span-12">
             <Label required={true}>Select Type</Label>
@@ -204,8 +204,8 @@ const handleImageUpload = (file: File | null) => {
           )}
 
           {/* Username */}
-          <div className="col-span-12">
-            <Label htmlFor="userName" required={true}>User Name (Unique)</Label>
+          <div className="col-span-12 dark:text-gray-300 dark:bg-black-800">
+            <Label  required={true}>User Name (Unique)</Label>
             <Input
               type="text"
               id="userName"
@@ -217,7 +217,7 @@ const handleImageUpload = (file: File | null) => {
           </div>
 
           {/* Email */}
-          <div className="col-span-12">
+          <div className="col-span-12 ">
             <Label required={true}>Email</Label>
             <Input
               type="email"
@@ -248,6 +248,8 @@ const handleImageUpload = (file: File | null) => {
           <div className="col-span-12">
             <Label required={true}>Location (Country)</Label>
             <Select
+            id='country'
+            name='country'
   label="Country"
   value={formData.location} // assuming `location` field is used for country
   options={countries.map((c) => ({ value: c.name, label: c.name }))}
@@ -288,6 +290,8 @@ const handleImageUpload = (file: File | null) => {
             <div className="col-span-12">
               <Label required={true}>Gender</Label>
               <Select
+              id='type'
+              name='type'
   label="Gender"
   value={formData.gender}
   options={[
@@ -338,7 +342,7 @@ const handleImageUpload = (file: File | null) => {
             <Label>Upload Image</Label>
             <DropzoneComponent
   value={formData.image} // ya formData.profilePhoto, jo bhi tum use kar rahi ho
-  onImageUpload={handleImageUpload}
+  onChange={handleImageUpload}
 />
 
           </div>

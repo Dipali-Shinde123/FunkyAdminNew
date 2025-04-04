@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState ,useEffect} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
@@ -6,7 +6,7 @@ import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
 import { endpoints, poster as loginPoster } from "../../utils/axios-auth";
 import { setLocalStorage } from "../../auth/context/utils";
-
+import { Sun, Moon } from "lucide-react";
 
 export default function SignInForm() {
   const [formData, setFormData] = useState({
@@ -18,7 +18,28 @@ export default function SignInForm() {
   const [isChecked, setIsChecked] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+  
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme) {
+      return storedTheme === 'dark';
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
 
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [darkMode]);
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
   // const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,7 +75,15 @@ export default function SignInForm() {
   };
 
   return (
-    <div className="flex flex-col flex-1">
+    <div className="flex flex-col flex-1 dark:text-gray-300 dark:bg-gray-800">
+        <button
+          onClick={toggleDarkMode}
+          className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white"
+          aria-label="Toggle dark mode"
+        >
+          {darkMode ? <Sun size={24} /> : <Moon size={24} />}
+        </button>
+      
       <div className="w-full max-w-md pt-10 mx-auto">
         <Link to="/" className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
           <ChevronLeftIcon className="size-5" />

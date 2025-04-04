@@ -65,7 +65,7 @@ const BasicTableOne: React.FC<BasicTableOneProps> = ({
   };
 
   return (
-    <div className="p-4 space-y-10 sm:4 md:6 lg:12">
+    <div className="p-4 space-y-10 sm:4 md:6 lg:12 ">
           {/* Search Bar and Dropdown Filter */}
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <input
@@ -73,14 +73,14 @@ const BasicTableOne: React.FC<BasicTableOneProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search..."
-              className="w-full md:w-1/3 border rounded px-4 py-2 shadow-sm"
+              className="w-full md:w-1/3 border rounded px-4 py-2 shadow-sm dark:text-gray-300 dark:bg-gray-800"
             />
             {
               showFilter && (
                 <select
                   value={selectedFilter}
                   onChange={(e) => setSelectedFilter(e.target.value)}
-                  className="w-full md:w-1/3 border rounded px-4 py-2 shadow-sm"
+                  className="w-full md:w-1/3 border rounded px-4 py-2 shadow-sm dark:text-gray-300 dark:bg-gray-800"
                 >
                   <option value="">Filter by Role</option>
                   <option value="Creator">Creator</option>
@@ -93,7 +93,7 @@ const BasicTableOne: React.FC<BasicTableOneProps> = ({
             <select
               value={itemsPerPage}
               onChange={handleItemsPerPageChange}
-              className="w-full md:w-1/3 border rounded px-4 py-2 shadow-sm"
+              className="w-full md:w-1/3 border rounded px-4 py-2 shadow-sm dark:text-gray-300 dark:bg-gray-800"
             >
               <option value={5}>5 rows</option>
               <option value={10}>10 rows</option>

@@ -61,12 +61,13 @@ const CreateCMS = () => {
 
   const [editorData, setEditorData] = useState<string>('');
 
-  const handleEditorChange = (value: string) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      description: value
-    }));
-  };
+  const handleEditorChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    };
 
 
   const handleNewsSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -139,17 +140,15 @@ const CreateCMS = () => {
 
           <div className="col-span-12">
             <Label htmlFor="description" required={true}>Description</Label>
-            <RichTextEditorComponent
-              initialData={formData.description}
-              onChange={handleEditorChange}
-            />
+            
+           <Input type="text" id="description" name="description" placeholder="Enter description" value={formData.description} onChange={handleEditorChange} />
           </div>
 
           <div className="col-span-12">
             <Label htmlFor="image" required={true}>Upload Image</Label>
             <DropzoneComponent
               value={formData.image ? URL.createObjectURL(formData.image) : null} // Use object URL for file preview
-              onImageUpload={(file) => handleImageUpload('image', file)} // Pass file to handleImageUpload
+              onChange={(file) => handleImageUpload('image', file)} // Pass file to handleImageUpload
             />
 
           </div>
