@@ -10,6 +10,7 @@ interface ErrorResponse {
     message: string;
 }
 
+// GET ALL USERS
 export const useGetUsers = () => {
     const [accessToken, setAccessToken] = useState<string | null>(null);
     useEffect(() => {
@@ -36,8 +37,9 @@ export const useGetUsers = () => {
     );
 
     return memoizedValue;
-}
+};
 
+// GET USER DETAILS
 export const useGetUserDetail = (userId: string | number) => {
     const [accessToken, setAccessToken] = useState<string | null>(null);
     useEffect(() => {
@@ -64,8 +66,9 @@ export const useGetUserDetail = (userId: string | number) => {
     );
 
     return memoizedValue;
-}
+};
 
+// CREATE USER
 export const useCreateUsers = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -116,43 +119,101 @@ export const useCreateUsers = () => {
     };
 };
 
+// UPDATE USER
+export const useUpdateUser = () => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState(false);
 
-// export const useUpdateCategories = (categoryId: string | number, formData: any) => {
-//     const [loading, setLoading] = useState(false);
-//     const [error, setError] = useState<string | null>(null);
-//     const [accessToken, setAccessToken] = useState<string | null>(null);
+    const updateUser = async (userId: string | number, formData: any) => {
+        setLoading(true);
+        setError(null);
+        setSuccess(false);
 
-//     useEffect(() => {
-//         const token = localStorage.getItem(STORAGE_KEY);
-//         setAccessToken(token);
-//     }, []);
+        const token = localStorage.getItem(STORAGE_KEY);
+        const URL = `${HOST_API + endpoints.users.update}/${userId}`;
 
-//     const updateCategory = async () => {
-//         setLoading(true);
-//         setError(null);
+        try {
+            const response = await axios.post(URL, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
 
-//         const URL = `${HOST_API + endpoints.users.update}/${categoryId}`;
-//         try {
-//             const response = await axios.post(URL, formData, {
-//                 headers: {
-//                     Authorization: `Bearer ${accessToken}`,
-//                     'Content-Type': 'multipart/form-data',
-//                 },
-//             });
+            setSuccess(true);
+            return {
+                success: true,
+                message: response.data.message || 'User updated successfully',
+                data: response.data.data,
+            };
+        } catch (err) {
+            const axiosError = err as AxiosError<ErrorResponse>;
+            const message = axiosError?.response?.data?.message || 'Error updating user.';
+            setError(message);
+            return {
+                success: false,
+                message,
+            };
+        } finally {
+            setLoading(false);
+        }
+    };
 
-//             return { success: true, data: response.data };
-//         } catch (error) {
-//             const axiosError = error as AxiosError;
-//             setError(axiosError.response?.data?.message || 'Something went wrong.');
-//             return { success: false, message: axiosError.response?.data?.message || 'Something went wrong.' };
-//         } finally {
-//             setLoading(false);
-//         }
-//     };
+    return {
+        updateUser,
+        loading,
+        error,
+        success,
+    };
+};
 
-//     return {
-//         updateCategory,
-//         loading,
-//         error,
-//     };
-// };
+// BLOCK / UNBLOCK / SUSPEND / REWARD USER
+export const useBlockUnblockUser = () => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState(false);
+
+    const blockUnblockUser = async (userId: string | number, status: 'active' | 'suspend' | 'block' | 'reward') => {
+        setLoading(true);
+        setError(null);
+        setSuccess(false);
+
+        const token = localStorage.getItem(STORAGE_KEY);
+        const URL = HOST_API + endpoints.users.blockUnblock;
+
+        try {
+            const response = await axios.post(URL, {
+                userId,
+                status,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            setSuccess(true);
+            return {
+                success: true,
+                message: response.data.message || 'User status updated successfully',
+            };
+        } catch (err) {
+            const axiosError = err as AxiosError<ErrorResponse>;
+            const message = axiosError?.response?.data?.message || 'Failed to update user status.';
+            setError(message);
+            return {
+                success: false,
+                message,
+            };
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return {
+        blockUnblockUser,
+        loading,
+        error,
+        success,
+    };
+};

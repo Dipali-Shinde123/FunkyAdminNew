@@ -62,7 +62,7 @@ export default function UserDropdown() {
             Dipali Shinde
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            randomuser@pimjo.com
+           dip123@gmail.com
           </span>
         </div>
 
