@@ -1,0 +1,18 @@
+<svg width="300" height="55" viewBox="0 0 300 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Icon Background -->
+  <g>
+    <rect width="48" height="48" rx="12" fill="#465FFF"/>
+    
+    <!-- Centered Bars -->
+    <g transform="translate(14, 14)">
+      <path d="M0 0C0 -0.93 0.754 -1.684 1.684 -1.684C2.614 -1.684 3.368 0 3.368 0V16.158C3.368 17.088 2.614 17.842 1.684 17.842C0.754 17.842 0 17.088 0 16.158V0Z" fill="white"/>
+      <path d="M6.318 6.736C6.318 5.806 7.072 5.052 8.002 5.052C8.932 5.052 9.686 5.806 9.686 6.736V16.158C9.686 17.088 8.932 17.842 8.002 17.842C7.072 17.842 6.318 17.088 6.318 16.158V6.736Z" fill="white" fill-opacity="0.9"/>
+      <path d="M12.63 2.525C12.63 1.595 13.384 0.841 14.314 0.841C15.244 0.841 15.998 1.595 15.998 2.525V16.158C15.998 17.088 15.244 17.842 14.314 17.842C13.384 17.842 12.63 17.088 12.63 16.158V2.525Z" fill="white" fill-opacity="0.7"/>
+    </g>
+  </g>
+
+  <!-- Logo Text -->
+  <text x="60" y="33" font-family="Segoe UI, sans-serif" font-size="35" font-weight="600" fill="#111827">
+    Funky <tspan fill="#3B82F6">Admin</tspan>
+  </text>
+</svg>

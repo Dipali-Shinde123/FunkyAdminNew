@@ -6,7 +6,7 @@ const DashbordViewPage = () => {
     return (
         <>
             <Helmet>
-                <title>CMS</title>
+                <title>Home</title>
             </Helmet>
             
             <DashbordView/>

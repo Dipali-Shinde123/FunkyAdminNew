@@ -29,6 +29,9 @@ import CreateEffectPage from '../../pages/Effect/Create-Effect';
 import EffectListPage from '../../pages/Effect/Effect-List';
 import EditEffectPage from '../../pages/Effect/Edit-Effect';
 import DashbordViewPage from '../../pages/dashbord/view-dashbord';
+import { element } from 'prop-types';
+import UserEditPage from '../../pages/users/Edit-user';
+
 
 export const dashboardRoutes = [
     {
@@ -52,6 +55,8 @@ export const dashboardRoutes = [
                 children: [
                     { element: <UserViewPage />, index: true },
                     { path: 'add-user', element: <UserCreatePage /> },
+                    {path: 'edit-user/:id', element:<UserEditPage/>},
+                  
                     // { path: ':id', element: <UserDetailPage /> },
                     // { path: 'edit-user/:id', element: <UserEditPage /> },
 
@@ -148,6 +153,7 @@ export const dashboardRoutes = [
                     {path: 'edit-effect/:id', element:<EditEffectPage/>}
                 ]
             }
+           
 
         ],
     },

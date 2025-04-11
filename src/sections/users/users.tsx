@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import BasicTableOne from '../../components/tables/BasicTables/BasicTableOne';
-import { useGetUsers } from '../../api/dashboard/user';
+import { useGetUsers, useBlockUnblockUser } from '../../api/dashboard/user';
 import { Trash2, Edit, Eye } from 'lucide-react';
-import { deleter, endpoints, poster } from '../../utils/axios-dashboard';
+import { deleter, endpoints } from '../../utils/axios-dashboard';
 import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
+import Select from '../../components/form/Select';
 
 interface User {
   fullName: string;
@@ -13,26 +14,23 @@ interface User {
   phone: string;
   type: string;
   id: string;
-  status: string;
+  blockUnblock: string;
+  location?: string;
 }
 
 const Users = () => {
   const { users, usersLoading, mutate: mutateUsers } = useGetUsers();
+  const { blockUnblockUser } = useBlockUnblockUser();
   const [tableData, setTableData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
+  const [userStatusMap, setUserStatusMap] = useState<Record<string, string>>({});
 
-  const handleEditRow = (user: any) => {
-    navigate(`/user/edit/${user.id}`);
-  };
-
-  const handleViewProfile = (user: any) => {
-    navigate(`/profile/${user.id}`);
-  };
+  const handleEditRow = (user: any) => navigate(`/users/edit-user/${user.id}`);
+  const handleViewProfile = (user: any) => navigate(`/profile/${user.id}`);
 
   const handleDeleteRow = async (id: string | number) => {
     try {
@@ -52,53 +50,82 @@ const Users = () => {
     }
   };
 
-  const handleStatusUpdate = async (id: string | number, status: 'activate' | 'suspend' | 'block' | 'reward') => {
-    try {
-      setLoading(true);
-      const url = `${endpoints.users.blockUnblock}/${id}`;
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      };
-      const response = await poster(url, { status }, headers);
-
-      if (response.status === 'success') {
-        enqueueSnackbar(`User ${status}d successfully!`, { variant: 'success' });
-
-        if (status === 'activate' || status === 'reward') {
-          enqueueSnackbar('Superadmin notified for approval.', { variant: 'info' });
-        }
-
-        mutateUsers();
-      } else {
-        enqueueSnackbar(response.message || 'Failed to update status.', { variant: 'error' });
+  const handleStatusUpdate = async (
+    id: string | number,
+    status: 'block' | 'active' | 'suspend' | 'reward' | 'unblock'
+  ) => {
+    if (status === 'unblock') {
+      status = 'active';
+    }
+  
+    if (['block', 'suspend', 'reward'].includes(status)) {
+      const reason = prompt(`Enter reason for ${status}:`);
+      if (!reason) {
+        enqueueSnackbar('Action cancelled. Reason required.', { variant: 'warning' });
+        return;
       }
-    } catch (err) {
-      enqueueSnackbar('Error updating user status.', { variant: 'error' });
-    } finally {
-      setLoading(false);
+    }
+  
+    if (status === 'active' || status === 'reward') {
+      enqueueSnackbar('Superadmin approval required. Notification sent.', { variant: 'info' });
+      return;
+    }
+  
+    setUserStatusMap(prev => ({
+      ...prev,
+      [id]: status,
+    }));
+  
+    const response = await blockUnblockUser(String(id), status);
+  
+    if (response.success) {
+      if (['suspend', 'block', 'reward'].includes(status)) {
+        enqueueSnackbar(`Notification sent to user about being ${status}.`, { variant: 'info' });
+      }
+      mutateUsers();
     }
   };
-
-  const filteredUsers = users?.data?.filter((user: User) => {
-    const matchSearch = user.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase());
-
-    const matchFilter = selectedFilter === 'all' ||
-      (selectedFilter === 'creator' && user.type === 'Creator') ||
-      (selectedFilter === 'advertiser' && user.type === 'Advertiser') ||
-      (selectedFilter === 'suspended' && user.status === 'suspend') ||
-      (selectedFilter === 'blocked' && user.status === 'block');
-
-    return matchSearch && matchFilter;
-  });
+  
 
   useEffect(() => {
-    if (filteredUsers) {
-      const updatedTableData = filteredUsers.map((user: User) => [
+    if (users?.data) {
+      const map: Record<string, string> = {};
+      users.data.forEach((user: any) => {
+        map[user.id] = user.blockUnblock?.toLowerCase() || 'active';
+      });
+      setUserStatusMap(map);
+    }
+  }, [users]);
+
+  useEffect(() => {
+    if (users?.data) {
+      const filtered = users.data.filter((user: User) => {
+        const nameMatch = (user.fullName?.toLowerCase() || '').includes(searchQuery.toLowerCase());
+        const emailMatch = (user.email?.toLowerCase() || '').includes(searchQuery.toLowerCase());
+        const matchSearch = nameMatch || emailMatch;
+
+        const userType = (user.type || '').toLowerCase();
+        const userBlockStatus = (user.blockUnblock || '').toLowerCase();
+
+        const matchFilter =
+          selectedFilter === 'all' ||
+          (selectedFilter === 'creator' && userType === 'creator') ||
+          (selectedFilter === 'advertiser' && userType === 'advertiser') ||
+          (selectedFilter === 'suspended' && userBlockStatus === 'suspend') ||
+          (selectedFilter === 'block' && userBlockStatus === 'block') ||
+          (selectedFilter === 'unblock' && userBlockStatus === 'unblock') ||
+          (selectedFilter === 'active' && userBlockStatus === 'active') ||
+          (selectedFilter === 'reward' && userBlockStatus === 'reward');
+
+        return matchSearch && matchFilter;
+      });
+
+      const updatedTableData = filtered.map((user: User) => [
         user.fullName,
         user.email,
         user.image_url,
         user.phone,
+        user.location || 'N/A',
         user.type,
         (
           <div className="flex gap-2">
@@ -108,25 +135,28 @@ const Users = () => {
           </div>
         ),
         (
-          <select
-            disabled={loading}
-            className="border px-2 py-1 rounded-md"
-            onChange={(e) => handleStatusUpdate(user.id, e.target.value as any)}
-            defaultValue=""
-          >
-            <option value="" disabled>Status</option>
-            <option value="activate">Activate</option>
-            <option value="suspend">Suspend</option>
-            <option value="block">Block</option>
-            <option value="reward">Reward</option>
-          </select>
+          <Select
+            label="Status"
+            name={`status-${user.id}`}
+            id={`status-${user.id}`}
+            value={userStatusMap[user.id] || 'active'}
+            onChange={(value) =>
+              handleStatusUpdate(user.id, value as 'block' | 'active' | 'suspend' | 'reward')
+            }
+            options={[
+              { label: 'Activate', value: 'active' },
+              { label: 'Suspend', value: 'suspend' },
+              { label: 'Block', value: 'block' },
+              { label: 'Reward', value: 'reward' },
+            ]}
+          />
         )
       ]);
       setTableData(updatedTableData);
     }
-  }, [filteredUsers, loading]);
+  }, [users, searchQuery, selectedFilter]);
 
-  const tableHeadings = ['User', 'Email', 'Profile Picture', 'Phone', 'Role', 'Actions', 'Status'];
+  const tableHeadings = ['User', 'Email', 'Profile Picture', 'Phone', 'Country', 'Role', 'Actions', 'Status'];
 
   if (usersLoading) {
     return (
@@ -138,26 +168,6 @@ const Users = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-4 mb-4">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search by name or email"
-          className="border px-4 py-2 rounded-md w-64"
-        />
-        <select
-          value={selectedFilter}
-          onChange={(e) => setSelectedFilter(e.target.value)}
-          className="border px-4 py-2 rounded-md"
-        >
-          <option value="all">All</option>
-          <option value="creator">Creators</option>
-          <option value="advertiser">Advertisers</option>
-          <option value="suspended">Suspended</option>
-          <option value="blocked">Blocked</option>
-        </select>
-      </div>
       <BasicTableOne
         tableData={tableData}
         tableHeadings={tableHeadings}

@@ -109,4 +109,5 @@ export const endpoints = {
         update: '/admin/country/update',
         delete: '/admin/country/delete',
     }
+    
 };

@@ -19,8 +19,10 @@ export const useGetUsers = () => {
     }, []);
 
     const URL = endpoints.users.list;
+   
     const { data, isLoading, error, isValidating, mutate } = useSWR(
         accessToken ? [URL, { headers: { Authorization: `Bearer ${accessToken}` } }] : null,
+       
         fetcher
     );
 

@@ -165,9 +165,10 @@ const handleImageUpload = (file: File | null) => {
 
   return (
     <div>
-      <div className="heading">Add a User</div>
-      <form className="sm:4 md:6 lg:12" onSubmit={handleUserSubmit}>
-        <div className="input-fields mt-5 grid grid-cols-12 gap-3 ">
+      {/* <div className="colour-white dark:text-white-300 dark:bg-white-800 text-center">Add User</div> */}
+      <h1 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white text-center">Add User</h1>
+      <form className="sm:4 md:6 lg:12 " onSubmit={handleUserSubmit}>
+        <div className="input-fields mt-5 grid grid-cols-12 gap-3  bg-white text-black dark:bg-gray-900 dark:text-white dark:border-gray-700">
        
           <div className="col-span-12">
             <Label required={true}>Select Type</Label>
@@ -204,16 +205,18 @@ const handleImageUpload = (file: File | null) => {
           )}
 
           {/* Username */}
-          <div className="col-span-12 dark:text-gray-300 dark:bg-black-800">
-            <Label  required={true}>User Name (Unique)</Label>
+          <div className="col-span-12">
+            <Label htmlFor="userName" required={true}>User Name (Unique)</Label>
             <Input
-              type="text"
-              id="userName"
-              name="userName"
-              placeholder="john_sams"
-              value={formData.userName}
-              onChange={handleInputChange}
-            />
+  type="text"
+  id="userName"
+  name="userName"
+  placeholder="john_sams"
+  value={formData.userName}
+  onChange={handleInputChange}
+  
+/>
+
           </div>
 
           {/* Email */}
@@ -235,12 +238,12 @@ const handleImageUpload = (file: File | null) => {
             <Label htmlFor="phone" required={true}>Phone</Label>
             <Input
               type="number"
-              id="phone"
               name="phone"
               placeholder="1234567890"
               value={formData.phone}
               onChange={handleInputChange}
               hint={error.phone ? "Phone number should be exactly 10 digits." : ""}
+             
             />
           </div>
 
@@ -264,14 +267,16 @@ const handleImageUpload = (file: File | null) => {
           <div className="col-span-12">
             <Label required={true}>Password</Label>
             <div className="relative">
-              <Input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                placeholder="Enter your password"
-                value={formData.password}
-                onChange={handleInputChange}
-              />
-              <button
+            <Input
+  type={showPassword ? "text" : "password"}
+  name="password"
+  placeholder="Enter your password"
+  value={formData.password}
+  onChange={handleInputChange}
+ 
+/>
+
+              <Button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
@@ -281,7 +286,7 @@ const handleImageUpload = (file: File | null) => {
                 ) : (
                   <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
                 )}
-              </button>
+              </Button>
             </div>
           </div>
 
